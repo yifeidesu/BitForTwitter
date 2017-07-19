@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Bitty</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">YVrM0CDcyIridwlgNnH6HJdel</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">93revWOCh9bsc1nhR9pUYuvfLdqGFj7TOg64yz8AGqr0FpyCBJ</string>
+
+
+</resources>
