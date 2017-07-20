@@ -1,4 +1,4 @@
-package com.robyn.bitty;
+package com.robyn.bitty1;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

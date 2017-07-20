@@ -1,6 +1,6 @@
-package com.robyn.bitty;
+package com.robyn.bitty1;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,23 +10,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String TAG = MainActivity.class.getSimpleName();
-    private TwitterLoginButton mLoginButton;
-
 
     private BottomNavigationView mBottomNavigationView;
+    private Button mButtonAction;
+    private Button mButtonLoginScreen;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -49,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
     public void composeTweet() {
         final TwitterSession session = TwitterCore.getInstance().getSessionManager()
                 .getActiveSession();
@@ -66,19 +66,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLoginButton = (TwitterLoginButton) findViewById(R.id.login);
-        mLoginButton.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                Log.i(TAG, "login button Call success");
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-
-            }
-        });
-
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -94,17 +81,21 @@ public class MainActivity extends AppCompatActivity {
 
         createFragment();
 
+        mButtonAction = (Button) findViewById(R.id.action_button);
+        mButtonAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(EmbeddedTweetsActivity.newIntent(getApplicationContext()));
+            }
+        });
 
-
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        mLoginButton.onActivityResult(requestCode, resultCode, data);
-
+        mButtonLoginScreen = (Button) findViewById(R.id.gologin);
+        mButtonLoginScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(LoginActivity.newIntent(getApplicationContext()));
+            }
+        });
     }
 
     private Fragment createFragment() {
@@ -116,5 +107,4 @@ public class MainActivity extends AppCompatActivity {
                 return HomeTimelineFragment.newInstance();
         }
     }
-
 }

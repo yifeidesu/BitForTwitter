@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.robyn.bitty">
+          package="com.robyn.bitty1">
 
     <application
-        android:name=".Bitty"
+        android:name="com.robyn.bitty1.Bitty"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,13 +11,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.robyn.bitty1.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name="com.robyn.bitty1.LoginActivity">
+
+        </activity>
+        <activity android:name="com.robyn.bitty1.EmbeddedTweetsActivity">
         </activity>
     </application>
 

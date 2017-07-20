@@ -7,16 +7,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.robyn.bitty.MainActivity">
+    tools:context="com.robyn.bitty1.MainActivity">
 
-    <com.twitter.sdk.android.core.identity.TwitterLoginButton
-        android:id="@+id/login"
+    <Button
+        android:id="@+id/action_button"
+        android:text="action button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/gologin"
+        android:text="@string/tw__login_btn_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:orientation="vertical"
-        android:background="@color/colorAccent"
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
