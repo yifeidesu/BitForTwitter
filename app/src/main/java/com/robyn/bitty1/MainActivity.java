@@ -5,24 +5,45 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.User;
+import com.twitter.sdk.android.core.services.AccountService;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
-public class MainActivity extends AppCompatActivity {
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import retrofit2.Call;
+
+public class MainActivity extends AppCompatActivity
+        implements  NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private BottomNavigationView mBottomNavigationView;
-    private Button mButtonAction;
     private Button mButtonLoginScreen;
+
+    private ImageView mImageViewUser;
+
+    private URL userImageUrl;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -64,7 +85,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_drawer);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+/**
+ * nav drawer_layout layout
+ */
+        DrawerLayout drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer_layout.setDrawerListener(drawer_toggle);
+        drawer_toggle.syncState();
+
+        // drawer_layout content
+        NavigationView drawer_nav = (NavigationView) findViewById(R.id.nav_view);
+        drawer_nav.setNavigationItemSelectedListener(this);
 
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -79,23 +116,32 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
+        TwitterApiClient client = TwitterCore.getInstance().getApiClient();
+        AccountService accountService = client.getAccountService();
+        Call<User> call = accountService.verifyCredentials(false, true, false);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void success(Result<User> result) {
+                try {
+                    userImageUrl = new URL(result.data.profileImageUrlHttps);
+                    // TODO: 7/21/2017 add user image to tool bar
+//                    mImageViewUser = (ImageView) findViewById(R.id.user_icon);
+//                    Glide.with(getApplicationContext()).load(userImageUrl)
+//                            .apply(RequestOptions.circleCropTransform())
+//                            .into(mImageViewUser);
+                    Log.i(TAG, "userImageUrl = " + userImageUrl);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+
+            }
+        });
+
         createFragment();
-
-        mButtonAction = (Button) findViewById(R.id.action_button);
-        mButtonAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(EmbeddedTweetsActivity.newIntent(getApplicationContext()));
-            }
-        });
-
-        mButtonLoginScreen = (Button) findViewById(R.id.gologin);
-        mButtonLoginScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(LoginActivity.newIntent(getApplicationContext()));
-            }
-        });
     }
 
     private Fragment createFragment() {
@@ -106,5 +152,63 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return HomeTimelineFragment.newInstance();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+            startActivity(LoginActivity.newIntent(getApplicationContext()));
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

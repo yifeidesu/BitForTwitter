@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/list_item_layout"
+              android:clickable="true"
               android:orientation="vertical"
+              android:background="@color/tw__composer_white"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/my_tweet_layout"
         android:orientation="vertical"
-        android:divider="@color/tw__composer_deep_gray"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_cmt"/>
+
+    <ToggleButton
+        android:textColor="@color/toggle_color"
+        android:id="@+id/retweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_retweet"
+        android:layout_marginBottom="8dp"/>
 
 </LinearLayout>
