@@ -1,4 +1,4 @@
-package com.robyn.bitty1;
+package com.robyn.bitty;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +29,9 @@ import com.twitter.sdk.android.tweetui.TweetView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.support.v7.widget.RecyclerView.*;
 
 
@@ -36,7 +39,8 @@ import static android.support.v7.widget.RecyclerView.*;
  * Created by yifei on 7/18/2017.
  */
 
-public class HomeTimelineFragment extends Fragment {
+public class HomeTimelineFragment extends Fragment
+         {
     private static final String TAG = HomeTimelineFragment.class.getSimpleName();
 
     private List<Tweet> mTweets = new ArrayList<>();
@@ -47,9 +51,7 @@ public class HomeTimelineFragment extends Fragment {
     private long mostRecentId = 0;
     private long leastRecentId = 0;
 
-    private Button mButtonToTop;
     private Button mButtonLoadMore;
-    
 
     public static HomeTimelineFragment newInstance() {
         
@@ -133,35 +135,45 @@ public class HomeTimelineFragment extends Fragment {
     }
 
     /**
-     * recycler view classes
+     * recycler view adapter and holder
      */
-    private class HomeHolder extends ViewHolder
+    public class HomeHolder extends ViewHolder
             implements View.OnClickListener {
-        private LinearLayout itemLayout;
-        private LinearLayout mLinearLayout;
-        private ImageView reply;
+//        private LinearLayout itemLayout;
+//        private LinearLayout tweetView;
+
+
+
+        @BindView(R.id.my_item_layout) LinearLayout itemLayout;
+        @BindView(R.id.my_tweet_layout) LinearLayout tweetView;
+
+        @BindView(R.id.reply) ImageView replyButton;
+        @BindView(R.id.retweet) ImageView reTweetButton;
+        @BindView(R.id.like) ImageView likeButton;
+        @BindView(R.id.share) ImageView shareButton;
+
+        @BindView(R.id.reply_layout) LinearLayout replyLayout;
+        @BindView(R.id.retweet_layout) LinearLayout retweetLayout;
+        @BindView(R.id.like_layout) LinearLayout likeLayout;
+        @BindView(R.id.share_layout) LinearLayout shareLayout;
 
         public HomeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item, parent, false));
 
             itemView.setOnClickListener(this);
 
-            itemLayout = itemView.findViewById(R.id.list_item_layout);
-
-            mLinearLayout = itemView.findViewById(R.id.my_tweet_layout);
-            reply = itemView.findViewById(R.id.reply);
-
+            ButterKnife.bind(this, itemView); // must in public class
         }
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(getContext(), "item clicked", Toast.LENGTH_LONG).show();
-
+            // doesnt work anyway
+            Toast.makeText(getContext(), "my item clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
     private class HomeAdapter extends RecyclerView.Adapter<HomeHolder> {
-        public HomeAdapter(List<Tweet> tweets) {
+        HomeAdapter(List<Tweet> tweets) {
             mTweets = tweets;
         }
 
@@ -175,21 +187,21 @@ public class HomeTimelineFragment extends Fragment {
         public void onBindViewHolder(HomeHolder holder, int position) {
 
             // remove previous view if the holder is not empty,
-            // otherwise it shows multiple tweets in one single holder
-            if (holder.mLinearLayout.getChildCount() != 0) {
-                holder.mLinearLayout.removeAllViews();
+            // otherwise holder shows multiple tweets in one single holder
+            if (holder.tweetView.getChildCount() != 0) {
+                holder.tweetView.removeAllViews();
             }
 
             final Tweet tweet = mTweets.get(position);
-            holder.mLinearLayout.addView(new TweetView(getContext(), tweet,
-                    R.style.tw__TweetLightWithActionsStyle));
+            final long tweetId = tweet.getId();
+            TweetView tweetView = new TweetView(getContext(), tweet);
+            tweetView.removeView(tweetView.getChildAt(4)); // remove the right-top twitter icon
+            holder.tweetView.addView(tweetView);
 
-
+            String retweetCount = String.valueOf(tweet.retweetCount);
 
             // to remove defualt listener comes w/ the tweet obj
-            holder.mLinearLayout.getChildAt(0).setOnClickListener(null);
-
-            // TODO: 7/22/2017   the whole holder's onclicklistener
+            holder.tweetView.getChildAt(0).setOnClickListener(null);
 
             OnClickListener onClickShowTweetListener = new OnClickListener() {
                 @Override
@@ -204,28 +216,12 @@ public class HomeTimelineFragment extends Fragment {
             Log.i(TAG,"ln 204");
 
 
-            // TODO: 7/22/2017 reply button listenr
+             //TODO: 7/22/2017 reply button listenr
 
-            holder.reply.setOnClickListener(new OnClickListener() {
+            holder.replyLayout.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TwitterApiClient client = TwitterCore.getInstance().getApiClient();
-                    StatusesService statusesService = client.getStatusesService();
-                    retrofit2.Call<Tweet> updateCall = statusesService.update(
-                            "test", // TODO: 7/21/2017 replyActivity
-                            tweet.getId(),
-                            null,null,null,null,null,null,null);
-                    updateCall.enqueue(new Callback<Tweet>() {
-                        @Override
-                        public void success(Result<Tweet> result) {
-                            Log.i(TAG, "updateCall success");
-                        }
-
-                        @Override
-                        public void failure(TwitterException exception) {
-
-                        }
-                    });
+                    startActivity(ShowTweetActivity.newIntent(getContext(), tweetId));
                 }
             });
 

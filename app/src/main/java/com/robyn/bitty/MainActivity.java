@@ -1,4 +1,4 @@
-package com.robyn.bitty1;
+package com.robyn.bitty;
 
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +33,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import retrofit2.Call;
+
+// TODO: 7/23/2017 drawer
+// TODO: 7/23/2017  actionbar profile photo
+// TODO: 7/23/2017  nav bar search/ direct msg
+
+
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener {
@@ -87,6 +93,34 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
+        TwitterApiClient client = TwitterCore.getInstance().getApiClient();
+        AccountService accountService = client.getAccountService();
+        Call<User> call = accountService.verifyCredentials(false, true, false);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void success(Result<User> result) {
+                //startActivity(MainActivity.newIntent(getApplicationContext()));
+                try {
+                    userImageUrl = new URL(result.data.profileImageUrlHttps);
+                    // TODO: 7/21/2017 add user image to tool bar
+//                    mImageViewUser = (ImageView) findViewById(R.id.user_icon);
+//                    Glide.with(getApplicationContext()).load(userImageUrl)
+//                            .apply(RequestOptions.circleCropTransform())
+//                            .into(mImageViewUser);
+                    Log.i(TAG, "userImageUrl = " + userImageUrl);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                Log.i(TAG, result.data.name);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                startActivity(LoginActivity.newIntent(getApplicationContext()));
+                Log.i(TAG, exception.getMessage());
+            }
+        });
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -115,31 +149,6 @@ public class MainActivity extends AppCompatActivity
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
-
-        TwitterApiClient client = TwitterCore.getInstance().getApiClient();
-        AccountService accountService = client.getAccountService();
-        Call<User> call = accountService.verifyCredentials(false, true, false);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void success(Result<User> result) {
-                try {
-                    userImageUrl = new URL(result.data.profileImageUrlHttps);
-                    // TODO: 7/21/2017 add user image to tool bar
-//                    mImageViewUser = (ImageView) findViewById(R.id.user_icon);
-//                    Glide.with(getApplicationContext()).load(userImageUrl)
-//                            .apply(RequestOptions.circleCropTransform())
-//                            .into(mImageViewUser);
-                    Log.i(TAG, "userImageUrl = " + userImageUrl);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-
-            }
-        });
 
         createFragment();
     }

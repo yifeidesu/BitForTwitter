@@ -1,4 +1,4 @@
-package com.robyn.bitty1;
+package com.robyn.bitty;
 
 import android.app.Application;
 

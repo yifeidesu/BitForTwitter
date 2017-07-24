@@ -10,4 +10,16 @@
     <string name="com.twitter.sdk.android.CONSUMER_KEY">YVrM0CDcyIridwlgNnH6HJdel</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">93revWOCh9bsc1nhR9pUYuvfLdqGFj7TOg64yz8AGqr0FpyCBJ</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="tw__like_tweet">Like Tweet</string>
+    <string name="tw__liked_tweet">Undo Like</string>
+    <string name="tw__share_tweet">Share Tweet</string>
+    <string name="tw__share_subject_format">Tweet from %1$s (@%2$s)</string>
+    <string name="tw__share_content_format">Check out @%1$s\'s Tweet: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="reply">Reply</string>
+
+
 </resources>
