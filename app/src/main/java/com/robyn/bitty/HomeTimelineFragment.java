@@ -1,13 +1,23 @@
 package com.robyn.bitty;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,22 +25,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.core.models.User;
+import com.twitter.sdk.android.core.services.AccountService;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.TweetView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
 
 import static android.support.v7.widget.RecyclerView.*;
 
@@ -42,20 +60,25 @@ import static android.support.v7.widget.RecyclerView.*;
 public class HomeTimelineFragment extends Fragment
          {
     private static final String TAG = HomeTimelineFragment.class.getSimpleName();
+             private static final String ARG_PROFILE_IMG_URL = "arg_profile_img_url";
 
-    private List<Tweet> mTweets = new ArrayList<>();
+             private List<Tweet> mTweets = new ArrayList<>();
     private List<Tweet> mTweetsUpdate = new ArrayList<>();
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mAdapter;
 
     private long mostRecentId = 0;
     private long leastRecentId = 0;
+    private String mProfileImgUrlString;
 
+    private Toolbar mToolbar;
+             private ProgressBar mProgressBar;
     private Button mButtonLoadMore;
 
-    public static HomeTimelineFragment newInstance() {
+    public static HomeTimelineFragment newInstance(String urlString) {
         
         Bundle args = new Bundle();
+        args.putString(ARG_PROFILE_IMG_URL, urlString);
         
         HomeTimelineFragment fragment = new HomeTimelineFragment();
         fragment.setArguments(args);
@@ -65,8 +88,12 @@ public class HomeTimelineFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         new RefreshTask().execute();
+
+        mProfileImgUrlString = getArguments().getString(ARG_PROFILE_IMG_URL);
+        Log.i(TAG, "url = " + mProfileImgUrlString);
     }
 
     @Nullable
@@ -75,12 +102,22 @@ public class HomeTimelineFragment extends Fragment
 
         final View view = inflater.inflate(R.layout.fragment_hometimeline, container, false);
 
+        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        try {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Home");
+        } catch (NullPointerException npe) {
+            Log.i(TAG, npe.getMessage());
+        }
+
+
+
         // setup recyclerView
         mRecyclerViewHome = view.findViewById(R.id.home_timeline);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewHome.setLayoutManager(layoutManager );
         mRecyclerViewHome.setItemAnimator(null);
-        updateUI(mTweets);
+        new updateUITask().execute();
 
         // set divider for recyclerView items
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerViewHome.getContext(),
@@ -108,8 +145,7 @@ public class HomeTimelineFragment extends Fragment
                 new PullPrevTask().execute();
                 mButtonLoadMore.setVisibility(GONE);
                 LinearLayoutManager m = new LinearLayoutManager(getActivity());
-
-                m.smoothScrollToPosition(mRecyclerViewHome, null, 15);
+// TODO: 7/24/2017 scroll a bit upward when update finish
                 Log.i(TAG, "PullPrevTask executed");
             }
         });
@@ -139,13 +175,11 @@ public class HomeTimelineFragment extends Fragment
      */
     public class HomeHolder extends ViewHolder
             implements View.OnClickListener {
-//        private LinearLayout itemLayout;
-//        private LinearLayout tweetView;
+//        private LinearLayout myItemLayout;
+//        private LinearLayout myTweetLayout;
 
-
-
-        @BindView(R.id.my_item_layout) LinearLayout itemLayout;
-        @BindView(R.id.my_tweet_layout) LinearLayout tweetView;
+        @BindView(R.id.my_item_layout) LinearLayout myItemLayout;
+        @BindView(R.id.my_tweet_layout) LinearLayout myTweetLayout;
 
         @BindView(R.id.reply) ImageView replyButton;
         @BindView(R.id.retweet) ImageView reTweetButton;
@@ -167,12 +201,13 @@ public class HomeTimelineFragment extends Fragment
 
         @Override
         public void onClick(View view) {
-            // doesnt work anyway
+            //works
             Toast.makeText(getContext(), "my item clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
     private class HomeAdapter extends RecyclerView.Adapter<HomeHolder> {
+
         HomeAdapter(List<Tweet> tweets) {
             mTweets = tweets;
         }
@@ -184,53 +219,114 @@ public class HomeTimelineFragment extends Fragment
         }
 
         @Override
-        public void onBindViewHolder(HomeHolder holder, int position) {
+        public void onBindViewHolder(final HomeHolder holder, int position) {
 
             // remove previous view if the holder is not empty,
             // otherwise holder shows multiple tweets in one single holder
-            if (holder.tweetView.getChildCount() != 0) {
-                holder.tweetView.removeAllViews();
+            if (holder.myTweetLayout.getChildCount() != 0) {
+                holder.myTweetLayout.removeAllViews();
             }
 
             final Tweet tweet = mTweets.get(position);
             final long tweetId = tweet.getId();
             TweetView tweetView = new TweetView(getContext(), tweet);
-            tweetView.removeView(tweetView.getChildAt(4)); // remove the right-top twitter icon
-            holder.tweetView.addView(tweetView);
 
-            String retweetCount = String.valueOf(tweet.retweetCount);
+            // remove the top_right twitter icon
+            tweetView.removeViewAt(4);
+            holder.myTweetLayout.addView(tweetView);
 
-            // to remove defualt listener comes w/ the tweet obj
-            holder.tweetView.getChildAt(0).setOnClickListener(null);
+            // to remove defualt listener comes w/ the tweetView object
+            holder.myTweetLayout.getChildAt(0).setOnClickListener(null);
 
             OnClickListener onClickShowTweetListener = new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.i(TAG,"onClickShowTweetListener invoked");
-                    long tweetId = tweet.getId();
                     startActivity(ShowTweetActivity.newIntent(getContext(), tweetId));
                 }
             };
 
-            holder.itemLayout.setOnClickListener(onClickShowTweetListener);
-            Log.i(TAG,"ln 204");
+            holder.myTweetLayout.getChildAt(0).setOnClickListener(onClickShowTweetListener);
 
+            holder.replyLayout.setOnClickListener(onClickShowTweetListener);
 
-             //TODO: 7/22/2017 reply button listenr
+            holder.retweetLayout.setOnClickListener(new View.OnClickListener(){
+                TwitterApiClient client = TwitterCore.getInstance().getApiClient();
+                StatusesService statusesService = client.getStatusesService();
 
-            holder.replyLayout.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    startActivity(ShowTweetActivity.newIntent(getContext(), tweetId));
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    final View dialView = LayoutInflater.from(getActivity())
+                            .inflate(R.layout.dial_retweet_choice, null);
+                    builder.setView(dialView).create();
+                    final AlertDialog retweetDial = builder.show();
+
+                    Button retweetButton = (Button) dialView.findViewById(R.id.retweet);
+                    retweetButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Call<Tweet> retweetCall = statusesService.retweet(tweetId, false);
+                            retweetCall.enqueue(new Callback<Tweet>() {
+                                @Override
+                                public void success(Result<Tweet> result) {
+
+                                }
+
+                                @Override
+                                public void failure(TwitterException exception) {
+
+                                }
+                            });
+                            retweetDial.dismiss();
+                        }
+                    });
+
+
+                    // TODO: 7/24/2017 append the url for quoting
+                    final Button retweetQuoteButton = (Button) dialView.findViewById(R.id.retweet_quote);
+                    retweetQuoteButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Call<Tweet> retweetQuoteCall = statusesService.retweet(tweetId,true);
+                            retweetQuoteCall.enqueue(new Callback<Tweet>() {
+                                @Override
+                                public void success(Result<Tweet> result) {
+                                    String tweetUrl = "https://twitter.com/"
+                                            + tweet.inReplyToScreenName + "/status/" + tweet.idStr;
+
+
+                                }
+
+                                @Override
+                                public void failure(TwitterException exception) {
+
+                                }
+                            });
+                        }
+                    });
                 }
             });
 
-            // TODO: 7/22/2017 retweet button listener - dial
+            holder.shareLayout.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
 
+                    // TODO: 7/23/2017 encode
+                    String tweetUrl = "https://twitter.com/"
+                            + tweet.inReplyToScreenName + "/status/" + tweet.idStr;
 
-
-            Log.i(TAG, "onBindViewHolder called");
-            Log.i(TAG, "onBindViewHolder called, position = " + String.valueOf(position));
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "sharing from BittyForTwitter: " + tweetUrl);
+                    shareIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.app_name)));
+                    ShareActionProvider mShareActionProvider = new ShareActionProvider(getContext());
+                    if (mShareActionProvider != null) {
+                        mShareActionProvider.setShareIntent(shareIntent);
+                    }
+                }
+            });
         }
 
         @Override
@@ -266,22 +362,18 @@ public class HomeTimelineFragment extends Fragment
                             mTweetsUpdate = result.data;
                             mTweets.addAll(0, mTweetsUpdate); // insert from the beginning
                         }
-                        updateUI(mTweets);
+                        new updateUITask().execute();
                         setMostRecentId();
                         setLeastRecentId();
                     }
 
                     Log.i(TAG, "mTweetsUpdate.size() = " + String.valueOf(result.data.size()));
-                    Log.i(TAG, mTweets.get(0).text);
-                    Log.i(TAG, String.valueOf(mTweets.get(0).getId()));
-                    Log.i(TAG, "home timeline call success");
-                    Log.i(TAG, "max  id = " + String.valueOf(leastRecentId));
-                    Log.i(TAG, "sinceid = " + String.valueOf(mostRecentId));
                 }
                 @Override
                 public void failure(TwitterException exception) {
-                    Toast.makeText(getContext(), "Tweets arriving in 15 min", Toast.LENGTH_LONG).show();
-                    Log.i(TAG, "call for hometimeline failed --> " + exception.getMessage());
+                    Toast.makeText(getContext(),
+                            "Something wrong with networking.", Toast.LENGTH_LONG).show();
+                    Log.i(TAG, "15 hometimeline get tweets fails --> " + exception.getMessage());
                 }
             });
             return mTweets;
@@ -291,11 +383,12 @@ public class HomeTimelineFragment extends Fragment
         protected void onPostExecute(List<Tweet> tweets) {
             super.onPostExecute(tweets);
             Log.i(TAG, "RefreshTask onPostExecute called");
+            cancel(false);
         }
     }
 
     /**
-     * Call to get previous home timeline tweets
+     * Call this asynctask to get previous home timeline tweets
      */
     private class PullPrevTask extends AsyncTask<Void, Void, List<Tweet>> {
         @Override
@@ -321,26 +414,18 @@ public class HomeTimelineFragment extends Fragment
                             mTweetsUpdate = result.data;
                             mTweets.addAll(mTweetsUpdate); // insert starting from the end of the list
                         }
-                        updateUI(mTweets);
+                        new updateUITask().execute();
                         setMostRecentId();
                         setLeastRecentId();
                     }
-
-                    Log.i(TAG, "mTweetsUpdate.size() = " + String.valueOf(result.data.size()));
-                    Log.i(TAG, mTweets.get(0).text);
-                    Log.i(TAG, String.valueOf(mTweets.get(0).getId()));
-                    Log.i(TAG, "home timeline call success");
-                    Log.i(TAG, "max  id = " + String.valueOf(leastRecentId));
-                    Log.i(TAG, "sinceid = " + String.valueOf(mostRecentId));
                 }
                 @Override
                 public void failure(TwitterException exception) {
                     Toast.makeText(getContext(), "Tweets arriving in 15 min", Toast.LENGTH_LONG).show();
                     Log.i(TAG, "call for hometimeline failed --> " + exception.getMessage());
+                    cancel(false);
                 }
             });
-
-
             return mTweets;
         }
 
@@ -348,56 +433,97 @@ public class HomeTimelineFragment extends Fragment
         protected void onPostExecute(List<Tweet> tweets) {
             super.onPostExecute(tweets);
             Log.i(TAG, "PullPrevTask onPostExecute called");
-            // TODO: 7/21/2017
         }
     }
 
-    /**
-     *
-     * @param tweets the tweets to load to the recycler view by the adapter
-     */
-    private void updateUI(List<Tweet> tweets) {
-        if (mAdapter == null) {
-            mAdapter = new HomeAdapter(tweets);
-            mRecyclerViewHome.setAdapter(mAdapter);
-        } else {
-            mAdapter.notifyItemRangeChanged(0, mTweets.size());
+    public class updateUITask extends AsyncTask<Void, Void, Void> {
+        boolean isNewAdapter = true;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (mAdapter == null) {
+                mAdapter = new HomeAdapter(mTweets);
+            } else {
+                isNewAdapter = false;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (isNewAdapter) {
+                mRecyclerViewHome.setAdapter(mAdapter);
+            } else {
+                mAdapter.notifyItemRangeChanged(0, mTweets.size());
+            }
+            cancel(false);
         }
     }
 
-    /**
-     * most recent tweet's id
-     */
+    public class profileImageTask extends AsyncTask<Void, Void, Void> {
+                 @Override
+                 protected Void doInBackground(Void... voids) {
+                     TwitterApiClient client = TwitterCore.getInstance().getApiClient();
+                     AccountService accountService = client.getAccountService();
+                     final Call<User> call = accountService.verifyCredentials(false, true, false);
+                     call.enqueue(new Callback<User>() {
+                         @Override
+                         public void success(Result<User> result) {
+                             try {
+                                 URL userImageUrl = new URL(mProfileImgUrlString);
+                                 //userImageUrl = new URL(result.data.profileImageUrlHttps);
+                                 String string = result.response.toString();
+                                 Log.i(TAG, string);
+
+                                 ImageView profileImage = (ImageView) mToolbar.getChildAt(1);
+
+                                 Glide.with(getContext()).load(userImageUrl)
+                                         .asBitmap().into(new BitmapImageViewTarget(profileImage) {
+                                     @Override
+                                     protected void setResource(Bitmap resource) {
+                                         Drawable profileDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, 100, 100, true));
+                                         Bitmap big = Bitmap.createScaledBitmap(resource, 90, 90, true);
+
+                                         RoundedBitmapDrawable circularBitmapDrawable =
+                                                 RoundedBitmapDrawableFactory.create(getContext().getResources(), big);
+                                         circularBitmapDrawable.setCircular(true);
+
+
+                                         mToolbar.setNavigationIcon(circularBitmapDrawable);
+                                     }
+                                 });
+
+                                 Log.i(TAG, "userImageUrl = " + userImageUrl);
+                             } catch (MalformedURLException e) {
+                                 e.printStackTrace();
+                             }
+                             Log.i(TAG, result.data.name);
+                             //mProgressBar.setVisibility(View.GONE);
+
+                         }
+
+                         @Override
+                         public void failure(TwitterException exception) {
+                             startActivity(LoginActivity.newIntent(getContext()));
+                             Log.i(TAG, exception.getMessage());
+                         }
+                     });
+                     return null;
+                 }
+
+                 @Override
+                 protected void onPostExecute(Void aVoid) {
+                     super.onPostExecute(aVoid);
+                     cancel(false);
+                 }
+             }
+
     private void setMostRecentId() {
-        if (mTweets != null) {
-            long[] ids = new long[mTweets.size()];
-            for (int i = 0; i < mTweets.size(); i ++) {
-                ids[i] = mTweets.get(i).getId();
-            }
-            mostRecentId = ids[0];
-            for (long id : ids) {
-                if (id > mostRecentId) {
-                    mostRecentId = id;
-                }
-            }
-        }
+        mostRecentId = mTweets.get(0).id;
     }
 
-    /**
-     * least recent tweet's id
-     */
     private void setLeastRecentId() {
-        if (mTweets != null) {
-            long[] ids = new long[mTweets.size()];
-            for (int i = 0; i < mTweets.size(); i ++) {
-                ids[i] = mTweets.get(i).getId();
-            }
-            leastRecentId = ids[0];
-            for (long id : ids) {
-                if (id < leastRecentId) {
-                    leastRecentId = id;
-                }
-            }
-        }
+        leastRecentId = mTweets.get(mTweets.size() - 1).id;
     }
 }

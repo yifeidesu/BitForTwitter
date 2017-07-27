@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/retweet"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Retweet"
+        android:textAppearance="@style/TextAppearance.AppCompat"/>
+
+    <FrameLayout
+        android:background="@color/tw__composer_deep_gray"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp">
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/retweet_quote"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quote and retweet"
+        android:textAppearance="@style/TextAppearance.AppCompat"/>
+
+</LinearLayout>

@@ -2,8 +2,10 @@ package com.robyn.bitty;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,9 +28,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // TODO: 7/21/2017  add toolbar + nav back icon to home screen
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mLoginButton = (TwitterLoginButton) findViewById(R.id.login);
+        toolbar.setNavigationIcon(R.drawable.ic_nav_back);
+        toolbar.setTitle("Login with Twitter");
+
+        // TODO: 21/2017  nav back icon to home screen
+
         mLoginButton = (TwitterLoginButton) findViewById(R.id.login);
         mLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
@@ -40,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void failure(TwitterException exception) {
                 Toast.makeText(getApplicationContext(),
-                        "Auth failed. Please check network", Toast.LENGTH_LONG).show();
+                        "Sorry. Auth failed.", Toast.LENGTH_LONG).show();
                 Log.i(TAG, "login session failed --> " + exception.getMessage());
             }
         });

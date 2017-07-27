@@ -95,7 +95,9 @@
             android:id="@+id/share_layout"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:actionProviderClass=
+                "android.widget.ShareActionProvider">
             <ImageView
                 android:id="@+id/share"
                 android:layout_gravity="center|right"
