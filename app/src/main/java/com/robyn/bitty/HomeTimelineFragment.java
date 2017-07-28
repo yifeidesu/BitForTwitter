@@ -1,15 +1,10 @@
 package com.robyn.bitty;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,21 +23,15 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.models.User;
-import com.twitter.sdk.android.core.services.AccountService;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.TweetView;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,10 +64,10 @@ public class HomeTimelineFragment extends Fragment
              private ProgressBar mProgressBar;
     private Button mButtonLoadMore;
 
-    public static HomeTimelineFragment newInstance(String urlString) {
+    public static HomeTimelineFragment newInstance() {
         
         Bundle args = new Bundle();
-        args.putString(ARG_PROFILE_IMG_URL, urlString);
+        //args.putString(ARG_PROFILE_IMG_URL, );
         
         HomeTimelineFragment fragment = new HomeTimelineFragment();
         fragment.setArguments(args);
@@ -102,22 +91,13 @@ public class HomeTimelineFragment extends Fragment
 
         final View view = inflater.inflate(R.layout.fragment_hometimeline, container, false);
 
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
-        try {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Home");
-        } catch (NullPointerException npe) {
-            Log.i(TAG, npe.getMessage());
-        }
-
-
 
         // setup recyclerView
         mRecyclerViewHome = view.findViewById(R.id.home_timeline);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewHome.setLayoutManager(layoutManager );
         mRecyclerViewHome.setItemAnimator(null);
-        new updateUITask().execute();
+        new UpdateUITask().execute();
 
         // set divider for recyclerView items
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerViewHome.getContext(),
@@ -166,6 +146,8 @@ public class HomeTimelineFragment extends Fragment
 
             }
         });
+
+
 
         return view;
     }
@@ -362,7 +344,7 @@ public class HomeTimelineFragment extends Fragment
                             mTweetsUpdate = result.data;
                             mTweets.addAll(0, mTweetsUpdate); // insert from the beginning
                         }
-                        new updateUITask().execute();
+                        new UpdateUITask().execute();
                         setMostRecentId();
                         setLeastRecentId();
                     }
@@ -414,7 +396,7 @@ public class HomeTimelineFragment extends Fragment
                             mTweetsUpdate = result.data;
                             mTweets.addAll(mTweetsUpdate); // insert starting from the end of the list
                         }
-                        new updateUITask().execute();
+                        new UpdateUITask().execute();
                         setMostRecentId();
                         setLeastRecentId();
                     }
@@ -436,7 +418,7 @@ public class HomeTimelineFragment extends Fragment
         }
     }
 
-    public class updateUITask extends AsyncTask<Void, Void, Void> {
+    public class UpdateUITask extends AsyncTask<Void, Void, Void> {
         boolean isNewAdapter = true;
         @Override
         protected Void doInBackground(Void... voids) {
@@ -460,64 +442,6 @@ public class HomeTimelineFragment extends Fragment
             cancel(false);
         }
     }
-
-    public class profileImageTask extends AsyncTask<Void, Void, Void> {
-                 @Override
-                 protected Void doInBackground(Void... voids) {
-                     TwitterApiClient client = TwitterCore.getInstance().getApiClient();
-                     AccountService accountService = client.getAccountService();
-                     final Call<User> call = accountService.verifyCredentials(false, true, false);
-                     call.enqueue(new Callback<User>() {
-                         @Override
-                         public void success(Result<User> result) {
-                             try {
-                                 URL userImageUrl = new URL(mProfileImgUrlString);
-                                 //userImageUrl = new URL(result.data.profileImageUrlHttps);
-                                 String string = result.response.toString();
-                                 Log.i(TAG, string);
-
-                                 ImageView profileImage = (ImageView) mToolbar.getChildAt(1);
-
-                                 Glide.with(getContext()).load(userImageUrl)
-                                         .asBitmap().into(new BitmapImageViewTarget(profileImage) {
-                                     @Override
-                                     protected void setResource(Bitmap resource) {
-                                         Drawable profileDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(resource, 100, 100, true));
-                                         Bitmap big = Bitmap.createScaledBitmap(resource, 90, 90, true);
-
-                                         RoundedBitmapDrawable circularBitmapDrawable =
-                                                 RoundedBitmapDrawableFactory.create(getContext().getResources(), big);
-                                         circularBitmapDrawable.setCircular(true);
-
-
-                                         mToolbar.setNavigationIcon(circularBitmapDrawable);
-                                     }
-                                 });
-
-                                 Log.i(TAG, "userImageUrl = " + userImageUrl);
-                             } catch (MalformedURLException e) {
-                                 e.printStackTrace();
-                             }
-                             Log.i(TAG, result.data.name);
-                             //mProgressBar.setVisibility(View.GONE);
-
-                         }
-
-                         @Override
-                         public void failure(TwitterException exception) {
-                             startActivity(LoginActivity.newIntent(getContext()));
-                             Log.i(TAG, exception.getMessage());
-                         }
-                     });
-                     return null;
-                 }
-
-                 @Override
-                 protected void onPostExecute(Void aVoid) {
-                     super.onPostExecute(aVoid);
-                     cancel(false);
-                 }
-             }
 
     private void setMostRecentId() {
         mostRecentId = mTweets.get(0).id;

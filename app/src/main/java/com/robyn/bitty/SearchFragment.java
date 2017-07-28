@@ -39,6 +39,12 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
+        try {
+            getActivity().getActionBar().setTitle(null);
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+
         return view;
     }
 

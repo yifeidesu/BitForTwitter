@@ -18,6 +18,7 @@
     <string name="reply">Reply</string>
     <string name="search">Search</string>
     <string name="clear_search">Clear Search</string>
+    <string name="networking_wrong_msg">Networking wrong,\n or too often refreshes.  \n Please try again later.</string>
 
 
 </resources>
