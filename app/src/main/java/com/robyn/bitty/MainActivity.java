@@ -4,9 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -179,7 +175,7 @@ public class MainActivity extends AppCompatActivity
         drawer_toggle.syncState();
 
         // drawer_layout content
-        NavigationView drawer_nav = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView drawer_nav = (NavigationView) findViewById(R.id.drawer_nav_view);
         drawer_nav.setNavigationItemSelectedListener(this);
 
         mBottomNavigationView
@@ -300,7 +296,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     Log.i(TAG, result.data.name);
                     //mProgressBar.setVisibility(View.GONE);
-                    playSound();
+                    new MakeSound().playSound(getApplicationContext());
                 }
 
                 @Override
@@ -321,18 +317,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    void playSound() {
-        SoundPool sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
 
-        /** soundId for Later handling of sound pool **/
-        int soundId = sp.load(getApplicationContext(),
-                R.raw.correct, 1); // in 2nd param u have to pass your desire ringtone
-
-        sp.play(soundId, 1, 1, 0, 0, 1);
-
-        MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct); // in 2nd param u have to pass your desire ringtone
-        //mPlayer.prepare();
-        mPlayer.start();
-    }
 
 }

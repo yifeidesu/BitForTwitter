@@ -275,7 +275,6 @@ public class HomeTimelineFragment extends Fragment {
                         }
                     });
 
-
                     // TODO: 7/24/2017 append the url for quoting
                     final Button retweetQuoteButton = (Button) dialView.findViewById(R.id.retweet_quote);
                     retweetQuoteButton.setOnClickListener(new View.OnClickListener() {
