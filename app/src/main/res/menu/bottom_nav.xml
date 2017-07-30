@@ -9,11 +9,11 @@
     <item
         android:id="@+id/nav_create"
         android:icon="@drawable/ic_create"
-        android:title="Create"/>
+        android:title="@string/create"/>
 
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="Search"/>
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/search"/>
 
 </menu>

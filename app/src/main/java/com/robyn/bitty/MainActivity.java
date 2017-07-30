@@ -4,15 +4,15 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,16 +28,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterApiClient;
@@ -48,19 +44,16 @@ import com.twitter.sdk.android.core.models.User;
 import com.twitter.sdk.android.core.services.AccountService;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
-import org.w3c.dom.Text;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 
 // TODO: 7/23/2017 drawer
-// TODO: 7/23/2017  nav bar search/ direct msg
-// TODO: 7/26/2017 move toolbar to fragment
+
+// TODO: 7/29/2017 runtime add in the search view
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener {
@@ -69,31 +62,95 @@ public class MainActivity extends AppCompatActivity
     private URL userImageUrl = null;
     private String userImageUrlString;
 
-    @BindView(R.id.navigation) BottomNavigationView mBottomNavigationView;
-    @BindView(R.id.process_bar) ProgressBar mProgressBar;
+    private FragmentManager mFragmentManager;
+    private Fragment mFragment;
+
+    @BindView(R.id.bottomNavigation) BottomNavigationView mBottomNavigationView;
+    //@BindView(R.id.process_bar) ProgressBar mProgressBar;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.networking_wrong_msg) TextView mNetworkingWrongMsg;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.nav_home:
-                    replaceFragment();
-                    return true;
-                case R.id.nav_create:
-                    composeTweet();
-                    return true;
-                case R.id.search:
+                    Log.i(TAG, "in listener " + item.getItemId());
                     replaceFragment();
 
+                    mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
+                    Log.i(TAG, "home");
+                    return true;
+                case R.id.nav_search:
+                    Log.i(TAG, "bnv " + item.getItemId());
+                    replaceFragment();
+                    mToolbar.getChildAt(0).setVisibility(View.GONE);
+                    return true;
+                case R.id.nav_create:
+                    Log.i(TAG, "create");
+                    composeTweet();
                     return true;
             }
-            return true;
+            return false;
         }
     };
+
+    void replaceFragment() {
+        Fragment fragment;
+        switch (mBottomNavigationView.getSelectedItemId()) {
+            case R.id.nav_home:
+                fragment = HomeTimelineFragment.newInstance();
+                break;
+            case R.id.nav_search:
+                fragment = SearchFragment.newInstance();
+                Log.i(TAG, "replace - search");
+                break;
+            default:
+                fragment = HomeTimelineFragment.newInstance();
+                break;
+        }
+
+        mFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
+    }
+
+    void updateFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+
+        if (fragment == null) {
+
+            mBottomNavigationView.setSelectedItemId(R.id.nav_home);
+            fragment = HomeTimelineFragment.newInstance();
+            fm.beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        } else {
+            switch (mBottomNavigationView.getSelectedItemId()) {
+                case R.id.nav_home:
+                    fragment = HomeTimelineFragment.newInstance();
+                    mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
+                    closeOptionsMenu();
+                    Log.i(TAG, "homefg");
+                    break;
+                case R.id.nav_search:
+                    fragment = SearchFragment.newInstance();
+                    Log.i(TAG, "searchfg");
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        //transaction.addToBackStack(null); // null = no transaction name
+        transaction.commit();
+    }
+
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -125,14 +182,27 @@ public class MainActivity extends AppCompatActivity
         NavigationView drawer_nav = (NavigationView) findViewById(R.id.nav_view);
         drawer_nav.setNavigationItemSelectedListener(this);
 
-        mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mBottomNavigationView
+                .setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        createFragment();
+        mFragmentManager = getSupportFragmentManager();
+        mFragment = mFragmentManager.findFragmentById(R.id.fragment_container);
+
+        if(mFragment == null) {
+            mFragment = HomeTimelineFragment.newInstance();
+            mFragmentManager
+                    .beginTransaction()
+                    .add(R.id.fragment_container, mFragment)
+                    .commit();
+        }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.fragment_search, menu);
+        // try runtime do this
+        getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
@@ -143,68 +213,11 @@ public class MainActivity extends AppCompatActivity
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-
         return true;
     }
 
-    public void createFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-        if (fragment == null) {
-            fragment = HomeTimelineFragment.newInstance();
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
-        } else {
-            replaceFragment();
-        }
-    }
 
-    void replaceFragment() {
-        Fragment fragment = null;
-        switch (mBottomNavigationView.getSelectedItemId()) {
-            case R.id.nav_home:
-                fragment = HomeTimelineFragment.newInstance();
-                mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
-                closeOptionsMenu();
 
-                Log.i(TAG, "homefg");
-                break;
-            case R.id.search:
-                fragment = SearchFragment.newInstance();
-                mToolbar.getChildAt(0).setVisibility(View.GONE);
-                openOptionsMenu();
-                Log.i(TAG, "searchfg");
-                break;
-        }
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.addToBackStack(null); // null = no transaction name
-        transaction.commit();
-    }
-
-    private void updateFragment(int itemId) {
-        Log.i(TAG, "updateFragment called");
-
-        Fragment fragment;
-
-        switch (mBottomNavigationView.getSelectedItemId()) {
-            case R.id.nav_home:
-                fragment = HomeTimelineFragment.newInstance();
-                break;
-            case R.id.search:
-                fragment = SearchFragment.newInstance();
-                break;
-            default:
-                return;
-        }
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 
     public void composeTweet() {
         final TwitterSession session = TwitterCore.getInstance().getSessionManager()
@@ -215,9 +228,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-
-
-
+    // for drawer
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -230,7 +241,7 @@ public class MainActivity extends AppCompatActivity
 
     // the drawer nav
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
@@ -252,7 +263,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public class CheckAuthTask extends AsyncTask<Void, Void, Void> {
+    private class CheckAuthTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
@@ -288,7 +299,8 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                     Log.i(TAG, result.data.name);
-                    mProgressBar.setVisibility(View.GONE);
+                    //mProgressBar.setVisibility(View.GONE);
+                    playSound();
                 }
 
                 @Override
@@ -304,9 +316,23 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            createFragment();
             Log.i(TAG, "url = " + userImageUrlString);
             cancel(false);
         }
     }
+
+    void playSound() {
+        SoundPool sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+
+        /** soundId for Later handling of sound pool **/
+        int soundId = sp.load(getApplicationContext(),
+                R.raw.correct, 1); // in 2nd param u have to pass your desire ringtone
+
+        sp.play(soundId, 1, 1, 0, 0, 1);
+
+        MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct); // in 2nd param u have to pass your desire ringtone
+        //mPlayer.prepare();
+        mPlayer.start();
+    }
+
 }

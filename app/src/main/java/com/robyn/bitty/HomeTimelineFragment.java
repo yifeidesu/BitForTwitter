@@ -46,12 +46,10 @@ import static android.support.v7.widget.RecyclerView.*;
  * Created by yifei on 7/18/2017.
  */
 
-public class HomeTimelineFragment extends Fragment
-         {
+public class HomeTimelineFragment extends Fragment {
     private static final String TAG = HomeTimelineFragment.class.getSimpleName();
-             private static final String ARG_PROFILE_IMG_URL = "arg_profile_img_url";
-
-             private List<Tweet> mTweets = new ArrayList<>();
+    private static final String ARG_PROFILE_IMG_URL = "arg_profile_img_url";
+    private List<Tweet> mTweets = new ArrayList<>();
     private List<Tweet> mTweetsUpdate = new ArrayList<>();
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mAdapter;
@@ -60,9 +58,12 @@ public class HomeTimelineFragment extends Fragment
     private long leastRecentId = 0;
     private String mProfileImgUrlString;
 
-    private Toolbar mToolbar;
-             private ProgressBar mProgressBar;
     private Button mButtonLoadMore;
+    //private ProgressBar mProgressBar;
+
+    @BindView(R.id.process_bar) ProgressBar mProgressBar;
+
+
 
     public static HomeTimelineFragment newInstance() {
         
@@ -90,7 +91,10 @@ public class HomeTimelineFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_hometimeline, container, false);
+        ButterKnife.bind(this, view);
 
+        //mProgressBar = view.findViewById(R.id.process_bar);
+        mProgressBar.setVisibility(VISIBLE); // init loading. swipeRefresh progressBar not show here
 
         // setup recyclerView
         mRecyclerViewHome = view.findViewById(R.id.home_timeline);
@@ -117,12 +121,12 @@ public class HomeTimelineFragment extends Fragment
         // TODO recyclerview set on scroll listener for scroll down to load prev tweets
 
 
-        mButtonLoadMore = (Button) view.findViewById(R.id.load_more);
+        mButtonLoadMore = view.findViewById(R.id.load_more);
         mButtonLoadMore.setVisibility(GONE);
         mButtonLoadMore.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PullPrevTask().execute();
+                //mPullPrevTask.execute();
                 mButtonLoadMore.setVisibility(GONE);
                 LinearLayoutManager m = new LinearLayoutManager(getActivity());
 // TODO: 7/24/2017 scroll a bit upward when update finish
@@ -138,16 +142,24 @@ public class HomeTimelineFragment extends Fragment
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
-                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    mButtonLoadMore.setVisibility(View.VISIBLE);
-                    Log.i(TAG, "reach bottom detected");
-                }
-                // TODO: 7/21/2017 double tap to go back to top
+                PullPrevTask pullPrevTask = new PullPrevTask();
 
+                if (pastVisibleItems + visibleItemCount >= totalItemCount &&
+                        pullPrevTask.getStatus() == AsyncTask.Status.PENDING) {
+
+                    try {
+                        pullPrevTask.execute();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Log.i(TAG, "reached bottom + pull task called");
+                }
             }
         });
 
-
+// TODO: 7/21/2017 double tap to go back to top
 
         return view;
     }
@@ -155,7 +167,7 @@ public class HomeTimelineFragment extends Fragment
     /**
      * recycler view adapter and holder
      */
-    public class HomeHolder extends ViewHolder
+    class HomeHolder extends ViewHolder
             implements View.OnClickListener {
 //        private LinearLayout myItemLayout;
 //        private LinearLayout myTweetLayout;
@@ -173,7 +185,7 @@ public class HomeTimelineFragment extends Fragment
         @BindView(R.id.like_layout) LinearLayout likeLayout;
         @BindView(R.id.share_layout) LinearLayout shareLayout;
 
-        public HomeHolder(LayoutInflater inflater, ViewGroup parent) {
+        HomeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item, parent, false));
 
             itemView.setOnClickListener(this);
@@ -183,7 +195,6 @@ public class HomeTimelineFragment extends Fragment
 
         @Override
         public void onClick(View view) {
-            //works
             Toast.makeText(getContext(), "my item clicked", Toast.LENGTH_SHORT).show();
         }
     }
@@ -304,9 +315,8 @@ public class HomeTimelineFragment extends Fragment
                     shareIntent.setType("text/plain");
                     startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.app_name)));
                     ShareActionProvider mShareActionProvider = new ShareActionProvider(getContext());
-                    if (mShareActionProvider != null) {
-                        mShareActionProvider.setShareIntent(shareIntent);
-                    }
+                    mShareActionProvider.setShareIntent(shareIntent);
+
                 }
             });
         }
@@ -323,6 +333,8 @@ public class HomeTimelineFragment extends Fragment
     private class RefreshTask extends AsyncTask<Void,Void,List<Tweet>> {
         @Override
         protected List<Tweet> doInBackground(Void... voids) {
+
+
 
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
             StatusesService statusesService = client.getStatusesService();
@@ -358,6 +370,7 @@ public class HomeTimelineFragment extends Fragment
                     Log.i(TAG, "15 hometimeline get tweets fails --> " + exception.getMessage());
                 }
             });
+
             return mTweets;
         }
 
@@ -365,6 +378,7 @@ public class HomeTimelineFragment extends Fragment
         protected void onPostExecute(List<Tweet> tweets) {
             super.onPostExecute(tweets);
             Log.i(TAG, "RefreshTask onPostExecute called");
+            mProgressBar.setVisibility(GONE);
             cancel(false);
         }
     }
@@ -408,6 +422,7 @@ public class HomeTimelineFragment extends Fragment
                     cancel(false);
                 }
             });
+
             return mTweets;
         }
 
@@ -415,10 +430,16 @@ public class HomeTimelineFragment extends Fragment
         protected void onPostExecute(List<Tweet> tweets) {
             super.onPostExecute(tweets);
             Log.i(TAG, "PullPrevTask onPostExecute called");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            cancel(true);
         }
     }
 
-    public class UpdateUITask extends AsyncTask<Void, Void, Void> {
+    private class UpdateUITask extends AsyncTask<Void, Void, Void> {
         boolean isNewAdapter = true;
         @Override
         protected Void doInBackground(Void... voids) {
@@ -427,7 +448,6 @@ public class HomeTimelineFragment extends Fragment
             } else {
                 isNewAdapter = false;
             }
-
             return null;
         }
 
