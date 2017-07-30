@@ -12,7 +12,6 @@ import android.support.design.widget.NavigationView;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
@@ -61,92 +60,64 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private Fragment mFragment;
 
-    @BindView(R.id.bottomNavigation) BottomNavigationView mBottomNavigationView;
+    //@BindView(R.id.bottomNavigation) BottomNavigationView mBottomNavigationView;
     //@BindView(R.id.process_bar) ProgressBar mProgressBar;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.networking_wrong_msg) TextView mNetworkingWrongMsg;
 
+//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+//        @Override
+//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//            switch (item.getItemId()) {
+//                case R.id.nav_home:
+//                    Log.i(TAG, "in listener " + item.getItemId());
+//                    replaceFragment();
+//
+//                    mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
+//                    Log.i(TAG, "home");
+//                    return true;
+//                case R.id.nav_search:
+//                    Log.i(TAG, "bnv " + item.getItemId());
+//                    replaceFragment();
+//                    mToolbar.getChildAt(0).setVisibility(View.GONE);
+//                    return true;
+//                case R.id.nav_create:
+//                    Log.i(TAG, "create");
+//                    composeTweet();
+//                    return true;
+//            }
+//            return false;
+//        }
+//    };
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.nav_home:
-                    Log.i(TAG, "in listener " + item.getItemId());
-                    replaceFragment();
-
+                case R.id.navigation_home:
                     mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
-                    Log.i(TAG, "home");
+                    replaceFragment(HomeTimelineFragment.newInstance());
                     return true;
-                case R.id.nav_search:
-                    Log.i(TAG, "bnv " + item.getItemId());
-                    replaceFragment();
+                case R.id.navigation_dashboard:
+                    return true;
+                case R.id.navigation_search:
                     mToolbar.getChildAt(0).setVisibility(View.GONE);
-                    return true;
-                case R.id.nav_create:
-                    Log.i(TAG, "create");
-                    composeTweet();
+                    replaceFragment(SearchFragment.newInstance());
                     return true;
             }
             return false;
         }
+
     };
 
-    void replaceFragment() {
-        Fragment fragment;
-        switch (mBottomNavigationView.getSelectedItemId()) {
-            case R.id.nav_home:
-                fragment = HomeTimelineFragment.newInstance();
-                break;
-            case R.id.nav_search:
-                fragment = SearchFragment.newInstance();
-                Log.i(TAG, "replace - search");
-                break;
-            default:
-                fragment = HomeTimelineFragment.newInstance();
-                break;
-        }
-
-        mFragmentManager
-                .beginTransaction()
+    void replaceFragment(Fragment fragment) {
+        mFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
-
-    void updateFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-
-        if (fragment == null) {
-
-            mBottomNavigationView.setSelectedItemId(R.id.nav_home);
-            fragment = HomeTimelineFragment.newInstance();
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
-        } else {
-            switch (mBottomNavigationView.getSelectedItemId()) {
-                case R.id.nav_home:
-                    fragment = HomeTimelineFragment.newInstance();
-                    mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
-                    closeOptionsMenu();
-                    Log.i(TAG, "homefg");
-                    break;
-                case R.id.nav_search:
-                    fragment = SearchFragment.newInstance();
-                    Log.i(TAG, "searchfg");
-                    break;
-                default:
-                    return;
-            }
-        }
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        //transaction.addToBackStack(null); // null = no transaction name
-        transaction.commit();
-    }
-
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -178,13 +149,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView drawer_nav = (NavigationView) findViewById(R.id.drawer_nav_view);
         drawer_nav.setNavigationItemSelectedListener(this);
 
-        mBottomNavigationView
-                .setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         mFragmentManager = getSupportFragmentManager();
         mFragment = mFragmentManager.findFragmentById(R.id.fragment_container);
-
-        if(mFragment == null) {
+        if (mFragment == null) {
             mFragment = HomeTimelineFragment.newInstance();
             mFragmentManager
                     .beginTransaction()
@@ -211,8 +181,6 @@ public class MainActivity extends AppCompatActivity
 
         return true;
     }
-
-
 
 
     public void composeTweet() {
@@ -295,7 +263,6 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                     Log.i(TAG, result.data.name);
-                    //mProgressBar.setVisibility(View.GONE);
                     new MakeSound().playSound(getApplicationContext());
                 }
 
@@ -316,7 +283,4 @@ public class MainActivity extends AppCompatActivity
             cancel(false);
         }
     }
-
-
-
 }

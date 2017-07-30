@@ -255,7 +255,7 @@ public class HomeTimelineFragment extends Fragment {
                     builder.setView(dialView).create();
                     final AlertDialog retweetDial = builder.show();
 
-                    Button retweetButton = (Button) dialView.findViewById(R.id.retweet);
+                    Button retweetButton = dialView.findViewById(R.id.retweet);
                     retweetButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -332,8 +332,6 @@ public class HomeTimelineFragment extends Fragment {
     private class RefreshTask extends AsyncTask<Void,Void,List<Tweet>> {
         @Override
         protected List<Tweet> doInBackground(Void... voids) {
-
-
 
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
             StatusesService statusesService = client.getStatusesService();
