@@ -27,12 +27,17 @@ public class ShowTweetActivity extends AppCompatActivity {
     private static final String TAG = ShowTweetActivity.class.getSimpleName();
 
     private static final String EXTRA_TWEET_ID = "tweet_id";
-    private long mTweetId;
+    private static final String EXTRA_SCREEN_NAME = "tweet_screen_name";
 
     private Tweet mTweet;
+    private long mTweetId;
+    private String mScreenName;
+
+
 
     private LinearLayout mTweetLayout;
     private ScrollView mScrollView;
+
 
     public static Intent newIntent(Context context, long tweetId) {
         Intent intent = new Intent(context, ShowTweetActivity.class);
@@ -73,10 +78,6 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     }
 
-    public void test() {
-        // test
-    }
-
     private class ShowTweetTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -89,6 +90,8 @@ public class ShowTweetActivity extends AppCompatActivity {
                 @Override
                 public void success(Result<Tweet> result) {
                     mTweet = result.data;
+                    mScreenName = mTweet.user.screenName;
+
                     TweetView tweetView = new TweetView(getApplicationContext(), mTweet);
                     tweetView.setOnClickListener(null);
                     tweetView.removeViewAt(4);
@@ -112,14 +115,11 @@ public class ShowTweetActivity extends AppCompatActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container_actions);
             if (fragment == null) {
-                fragment = TweetActionsFragment.newInstance(getIntent()
-                        .getLongExtra(EXTRA_TWEET_ID, mTweetId));
+                fragment = TweetActionsFragment.newInstance(mTweetId, mScreenName);
                 fragmentManager
                         .beginTransaction()
                         .add(R.id.fragment_container_actions, fragment)
                         .commit();
-                Log.i(TAG, "fg commit called");
-                Log.i(TAG, "fg commit called" + mTweetId);
             }
             cancel(false);
         }

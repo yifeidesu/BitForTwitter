@@ -18,20 +18,23 @@ import butterknife.ButterKnife;
 
 public class TweetActionsFragment extends Fragment {
     private static final String ARGS_TWEET_ID = "args_tweet_id";
+    private static final String ARGS_SCREEN_NAME = "args_screen_name";
 
     Fragment mFragment = null;
 
     private long mTweetId;
+    private String mScreenName;
 
     @BindView(R.id.reply_layout) LinearLayout mReplyLayout;
     @BindView(R.id.retweet_layout) LinearLayout mRetweetLayout;
     @BindView(R.id.like_layout) LinearLayout mLikeLayout;
     @BindView(R.id.share_layout) LinearLayout mShareLayout;
 
-    public static TweetActionsFragment newInstance(long tweetId) {
+    public static TweetActionsFragment newInstance(long tweetId, String screenName) {
 
         Bundle args = new Bundle();
         args.putLong(ARGS_TWEET_ID, tweetId);
+        args.putString(ARGS_SCREEN_NAME, screenName);
 
         TweetActionsFragment fragment = new TweetActionsFragment();
         fragment.setArguments(args);
@@ -43,6 +46,7 @@ public class TweetActionsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mTweetId = getArguments().getLong(ARGS_TWEET_ID);
+        mScreenName = getArguments().getString(ARGS_SCREEN_NAME);
     }
 
     @Nullable
@@ -54,8 +58,7 @@ public class TweetActionsFragment extends Fragment {
         mReplyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                startActivity(ReplyActivity.newIntent(getContext(), mTweetId));
+                startActivity(ReplyActivity.newIntent(getContext(), mTweetId, mScreenName));
             }
         });
 

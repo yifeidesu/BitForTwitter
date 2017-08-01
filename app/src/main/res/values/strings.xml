@@ -11,7 +11,7 @@
     <string name="networking_wrong_msg">Networking wrong,\n or too often refreshes.  \n Please try again later.</string>
     <string name="create">Create</string>
     <string name="tweet">Tweet</string>
-    <string name="in_reply_to">In reply to</string>
+    <string name="in_reply_to">In reply to \ </string>
     <string name="submit_reply">Submit reply</string>
 
     <string name="com.twitter.sdk.android.CONSUMER_KEY">YVrM0CDcyIridwlgNnH6HJdel</string>

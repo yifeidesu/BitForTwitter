@@ -20,17 +20,16 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:title="@string/app_name"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#212121"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
         android:id="@+id/scroll_view"
-        android:layout_above="@+id/fragment_container_reply"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -59,14 +58,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/fragment_container_reply"-->
-        <!--android:divider="@drawable/my_divider"-->
-        <!--android:showDividers="beginning"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"/>-->
-
 </RelativeLayout>
