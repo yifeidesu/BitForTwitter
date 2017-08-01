@@ -20,6 +20,7 @@
     <string name="clear_search">Clear Search</string>
     <string name="networking_wrong_msg">Networking wrong,\n or too often refreshes.  \n Please try again later.</string>
     <string name="create">Create</string>
+    <string name="tweet">Tweet</string>
 
 
 </resources>

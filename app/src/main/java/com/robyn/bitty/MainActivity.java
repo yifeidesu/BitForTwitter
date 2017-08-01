@@ -60,36 +60,8 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private Fragment mFragment;
 
-    //@BindView(R.id.bottomNavigation) BottomNavigationView mBottomNavigationView;
-    //@BindView(R.id.process_bar) ProgressBar mProgressBar;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.networking_wrong_msg) TextView mNetworkingWrongMsg;
-
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.nav_home:
-//                    Log.i(TAG, "in listener " + item.getItemId());
-//                    replaceFragment();
-//
-//                    mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
-//                    Log.i(TAG, "home");
-//                    return true;
-//                case R.id.nav_search:
-//                    Log.i(TAG, "bnv " + item.getItemId());
-//                    replaceFragment();
-//                    mToolbar.getChildAt(0).setVisibility(View.GONE);
-//                    return true;
-//                case R.id.nav_create:
-//                    Log.i(TAG, "create");
-//                    composeTweet();
-//                    return true;
-//            }
-//            return false;
-//        }
-//    };
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -99,9 +71,11 @@ public class MainActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
+
                     replaceFragment(HomeTimelineFragment.newInstance());
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_compose:
+                    composeTweet();
                     return true;
                 case R.id.navigation_search:
                     mToolbar.getChildAt(0).setVisibility(View.GONE);
@@ -163,24 +137,33 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // try runtime do this
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
-        final SearchView searchView = (SearchView) searchItem.getActionView();
-
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        return true;
-    }
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        return super.onPrepareOptionsMenu(menu);
+//
+//    }
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // try runtime do this
+//        Log.i(TAG, "menu create" + menu.size());
+//
+//        menu.clear();
+//        if (menu.size()<1) {
+//            getMenuInflater().inflate(R.menu.menu_search, menu);
+//
+//            MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+//            final SearchView searchView = (SearchView) searchItem.getActionView();
+//
+//            SearchManager searchManager =
+//                    (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//
+//            searchView.setSearchableInfo(
+//                    searchManager.getSearchableInfo(getComponentName()));
+//        }
+//
+//        return false;
+//    }
 
 
     public void composeTweet() {
@@ -264,6 +247,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     Log.i(TAG, result.data.name);
                     new MakeSound().playSound(getApplicationContext());
+                    mNetworkingWrongMsg.setVisibility(View.GONE);
                 }
 
                 @Override
