@@ -3,7 +3,6 @@ package com.robyn.bitty;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,8 @@ public class TweetActionsFragment extends Fragment {
     private static final String ARGS_TWEET_ID = "args_tweet_id";
 
     Fragment mFragment = null;
+
+    private long mTweetId;
 
     @BindView(R.id.reply_layout) LinearLayout mReplyLayout;
     @BindView(R.id.retweet_layout) LinearLayout mRetweetLayout;
@@ -40,6 +41,8 @@ public class TweetActionsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mTweetId = getArguments().getLong(ARGS_TWEET_ID);
     }
 
     @Nullable
@@ -52,12 +55,7 @@ public class TweetActionsFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (mFragment == null) {
-                    mFragment = ReplyFragment.newInstance();
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .add(R.id.fragment_container_reply, mFragment)
-                            .commit();
-                }
+                startActivity(ReplyActivity.newIntent(getContext(), mTweetId));
             }
         });
 

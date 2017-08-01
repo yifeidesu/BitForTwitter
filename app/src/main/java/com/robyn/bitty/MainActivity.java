@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
-
                     replaceFragment(HomeTimelineFragment.newInstance());
                     return true;
                 case R.id.navigation_compose:
@@ -133,35 +132,6 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
     }
-
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        return super.onPrepareOptionsMenu(menu);
-//
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // try runtime do this
-//        Log.i(TAG, "menu create" + menu.size());
-//
-//        menu.clear();
-//        if (menu.size()<1) {
-//            getMenuInflater().inflate(R.menu.menu_search, menu);
-//
-//            MenuItem searchItem = menu.findItem(R.id.menu_item_search);
-//            final SearchView searchView = (SearchView) searchItem.getActionView();
-//
-//            SearchManager searchManager =
-//                    (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//
-//            searchView.setSearchableInfo(
-//                    searchManager.getSearchableInfo(getComponentName()));
-//        }
-//
-//        return false;
-//    }
-
 
     public void composeTweet() {
         final TwitterSession session = TwitterCore.getInstance().getSessionManager()

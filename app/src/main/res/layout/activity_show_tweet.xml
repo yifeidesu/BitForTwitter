@@ -60,14 +60,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/fragment_container_reply"
-        android:divider="@drawable/my_divider"
-        android:showDividers="beginning"
-        android:layout_margin="8dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragment_container_reply"-->
+        <!--android:divider="@drawable/my_divider"-->
+        <!--android:showDividers="beginning"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
 
 </RelativeLayout>
