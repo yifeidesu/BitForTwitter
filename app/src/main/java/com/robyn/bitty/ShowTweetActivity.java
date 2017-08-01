@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -22,7 +21,6 @@ import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.tweetui.TweetUtils;
 import com.twitter.sdk.android.tweetui.TweetView;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ShowTweetActivity extends AppCompatActivity {
@@ -65,7 +63,6 @@ public class ShowTweetActivity extends AppCompatActivity {
             }
         });
 
-        mTweetLayout = (LinearLayout) findViewById(R.id.tweet_layout);
         mScrollView = (ScrollView) findViewById(R.id.scrollView);
 
 
@@ -74,6 +71,10 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         // TODO: 7/25/2017 delete reply box views
 
+    }
+
+    public void test() {
+        // test
     }
 
     private class ShowTweetTask extends AsyncTask<Void, Void, Void> {
@@ -109,13 +110,13 @@ public class ShowTweetActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container_actions);
             if (fragment == null) {
                 fragment = TweetActionsFragment.newInstance(getIntent()
                         .getLongExtra(EXTRA_TWEET_ID, mTweetId));
                 fragmentManager
                         .beginTransaction()
-                        .add(R.id.fragment_container, fragment)
+                        .add(R.id.fragment_container_actions, fragment)
                         .commit();
                 Log.i(TAG, "fg commit called");
                 Log.i(TAG, "fg commit called" + mTweetId);

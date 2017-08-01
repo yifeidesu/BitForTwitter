@@ -1,6 +1,5 @@
 package com.robyn.bitty;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,10 +17,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -89,7 +86,7 @@ public class MainActivity extends AppCompatActivity
 
     void replaceFragment(Fragment fragment) {
         mFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container_actions, fragment)
                 .commit();
     }
 
@@ -127,12 +124,12 @@ public class MainActivity extends AppCompatActivity
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         mFragmentManager = getSupportFragmentManager();
-        mFragment = mFragmentManager.findFragmentById(R.id.fragment_container);
+        mFragment = mFragmentManager.findFragmentById(R.id.fragment_container_actions);
         if (mFragment == null) {
             mFragment = HomeTimelineFragment.newInstance();
             mFragmentManager
                     .beginTransaction()
-                    .add(R.id.fragment_container, mFragment)
+                    .add(R.id.fragment_container_actions, mFragment)
                     .commit();
         }
     }

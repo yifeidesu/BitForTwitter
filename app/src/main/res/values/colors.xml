@@ -8,5 +8,6 @@
     <color name="transparent">#00000000</color>
 
     <color name="gray600">#607D8B</color>
+    <color name="gray50">#ECEFF1</color>
 
 </resources>
