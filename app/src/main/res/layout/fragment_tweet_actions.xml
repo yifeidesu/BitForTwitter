@@ -47,12 +47,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/like_layout"
+        android:id="@+id/favo_layout"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
-            android:id="@+id/like"
+            android:id="@+id/favo"
             android:layout_gravity="center|right"
             android:src="@drawable/ic_like"
             android:layout_width="wrap_content"

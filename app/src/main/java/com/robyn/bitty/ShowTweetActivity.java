@@ -33,10 +33,8 @@ public class ShowTweetActivity extends AppCompatActivity {
     private long mTweetId;
     private String mScreenName;
 
-
-
-    private LinearLayout mTweetLayout;
     private ScrollView mScrollView;
+
 
 
     public static Intent newIntent(Context context, long tweetId) {
@@ -115,7 +113,8 @@ public class ShowTweetActivity extends AppCompatActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container_actions);
             if (fragment == null) {
-                fragment = TweetActionsFragment.newInstance(mTweetId, mScreenName);
+                fragment = TweetActionsFragment.newInstance(
+                        mTweetId, mScreenName);
                 fragmentManager
                         .beginTransaction()
                         .add(R.id.fragment_container_actions, fragment)

@@ -7,12 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,12 +175,12 @@ public class HomeTimelineFragment extends Fragment {
 
         @BindView(R.id.reply) ImageView replyButton;
         @BindView(R.id.retweet) ImageView reTweetButton;
-        @BindView(R.id.like) ImageView likeButton;
+        @BindView(R.id.favo) ImageView likeButton;
         @BindView(R.id.share) ImageView shareButton;
 
         @BindView(R.id.reply_layout) LinearLayout replyLayout;
         @BindView(R.id.retweet_layout) LinearLayout retweetLayout;
-        @BindView(R.id.like_layout) LinearLayout likeLayout;
+        @BindView(R.id.favo_layout) LinearLayout likeLayout;
         @BindView(R.id.share_layout) LinearLayout shareLayout;
 
         HomeHolder(LayoutInflater inflater, ViewGroup parent) {
