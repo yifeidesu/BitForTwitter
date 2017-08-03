@@ -7,12 +7,16 @@ is a fresh and light Twitter client.
 
 ## Dependencies
 
-* Android AppCompat Library v7
-* Android Support Library v4
-* Android Design Library
-* Android RecyclerView Library v7
+*	Android AppCompat Library v7
+*	Android Design Library
+*	Android RecyclerView Library v7
+*	Android Support Library v4
+*	ButterKnife
+*	Glide
+*	OkHttp3
+*	Twitter SDK for Android
 
-* Twitter SDK for Android
-* ButterKnife
-* OkHttp3
-* Glide
+~~~~
+
+## License
+
