@@ -1,6 +1,7 @@
-# Bitty
-is a fresh and light Twitter client.
+# Bitty for Twitter
+This is a fresh and light Twitter client.
 
+## Get it
 [<img src="https://user-images.githubusercontent.com/23082500/28900196-800fad0e-77bd-11e7-8f1b-a197609ed22c.png" width="200">](https://play.google.com/store/apps/details?id=com.robyn.bitty)
 
 ## Dependencies
@@ -14,7 +15,7 @@ is a fresh and light Twitter client.
 *	OkHttp3
 *	Twitter SDK for Android
 
-## ScreenShots
+## Screenshots
 <img src="https://user-images.githubusercontent.com/23082500/28901343-85a77b54-77c5-11e7-8d15-10071f6f6461.jpg">
 
 ## License
