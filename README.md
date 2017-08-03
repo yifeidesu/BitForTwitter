@@ -1,4 +1,4 @@
-# Bitty for Twitter
+# Bitty for Twitter beta1
 This is a fresh and light Twitter client.
 
 ## Get it
