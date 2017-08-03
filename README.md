@@ -1,4 +1,4 @@
-# Bitty for Twitter beta1
+# Bitty for Twitter :baby_chick::baby_chick::baby_chick: beta1
 This is a fresh and light Twitter client.
 
 ## Get it
