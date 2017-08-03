@@ -1,5 +1,5 @@
-# Bitty for Twitter :baby_chick::baby_chick::baby_chick: beta1
-This is a fresh and light Twitter client.
+# Bitty for Twitter
+This is a fresh and light Twitter client. :baby_chick:
 
 ## Get it
 [<img src="https://user-images.githubusercontent.com/23082500/28900196-800fad0e-77bd-11e7-8f1b-a197609ed22c.png" width="200">](https://play.google.com/store/apps/details?id=com.robyn.bitty)
