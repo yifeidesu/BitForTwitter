@@ -1,4 +1,4 @@
-# Bitty for Twitter
+# Bitty for Twitter beta-1
 <img src="https://user-images.githubusercontent.com/23082500/28902946-2fcc4eb6-77d0-11e7-88ef-200cdbcc185b.png" width="100">
 :baby_chick: This Twitter client is fresh and light.
 
