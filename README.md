@@ -3,8 +3,6 @@ is a fresh and light Twitter client.
 
 [<img src="https://user-images.githubusercontent.com/23082500/28900196-800fad0e-77bd-11e7-8f1b-a197609ed22c.png" width="200">](https://play.google.com/store/apps/details?id=com.robyn.bitty)
 
-
-
 ## Dependencies
 
 *	Android AppCompat Library v7
@@ -15,6 +13,9 @@ is a fresh and light Twitter client.
 *	Glide
 *	OkHttp3
 *	Twitter SDK for Android
+
+## ScreenShots
+<img src="https://user-images.githubusercontent.com/23082500/28901304-2fd33902-77c5-11e7-8376-bce291ecca06.jpg">
 
 ## License
  Copyright 2017 The author of Bitty
