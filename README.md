@@ -15,7 +15,7 @@ is a fresh and light Twitter client.
 *	Twitter SDK for Android
 
 ## ScreenShots
-<img src="https://user-images.githubusercontent.com/23082500/28901304-2fd33902-77c5-11e7-8376-bce291ecca06.jpg">
+<img src="https://user-images.githubusercontent.com/23082500/28901343-85a77b54-77c5-11e7-8d15-10071f6f6461.jpg">
 
 ## License
  Copyright 2017 The author of Bitty
