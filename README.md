@@ -1,5 +1,5 @@
 # Bitty for Twitter
-<img src="https://user-images.githubusercontent.com/23082500/28902946-2fcc4eb6-77d0-11e7-88ef-200cdbcc185b.png" width="200">
+<img src="https://user-images.githubusercontent.com/23082500/28902946-2fcc4eb6-77d0-11e7-88ef-200cdbcc185b.png" width="100">
 :baby_chick: This is a fresh and light Twitter client.
 
 ## Get it
