@@ -20,7 +20,7 @@
 <img src="https://user-images.githubusercontent.com/23082500/28901343-85a77b54-77c5-11e7-8d15-10071f6f6461.jpg">
 
 ## License
- Copyright 2017 The author of Bitty
+ Copyright 2017 yifeidesu
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
