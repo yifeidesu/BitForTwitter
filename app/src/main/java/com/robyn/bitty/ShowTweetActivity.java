@@ -35,8 +35,6 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     private ScrollView mScrollView;
 
-
-
     public static Intent newIntent(Context context, long tweetId) {
         Intent intent = new Intent(context, ShowTweetActivity.class);
         intent.putExtra(EXTRA_TWEET_ID, tweetId);
@@ -62,7 +60,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() { // already set parent ac, do i still need this?
             @Override
             public void onClick(View view) {
-                startActivity(MainActivity.newIntent(getApplicationContext()));
+                finish();
             }
         });
 
