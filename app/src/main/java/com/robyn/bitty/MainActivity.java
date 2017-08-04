@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -158,18 +159,27 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.drawer_create) {
+        if (id == R.id.drawer_login) {
             startActivity(LoginActivity.newIntent(getApplicationContext()));
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.drawer_feedback) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
 
-        } else if (id == R.id.nav_slideshow) {
+            String appName = Bitty.class.getSimpleName();
+            String androidVersion = "Android Version: " + String.valueOf(Build.VERSION.SDK_INT)  + "\n";
+            String manufacturer = "Manufacturer: " + Build.MANUFACTURER + "\n";
+            String model = "Model: " + Build.MODEL + "\n";
+            String version = "App Version: " + BuildConfig.VERSION_CODE + BuildConfig.VERSION_NAME + "\n\n";
 
-        } else if (id == R.id.nav_manage) {
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.dayplus@gmail.com" });
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback to " + appName);
+            intent.putExtra(Intent.EXTRA_TEXT,
+                    androidVersion + manufacturer + model + version
+                            + "======\n");
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(Intent.createChooser(intent, "Send Email"));
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

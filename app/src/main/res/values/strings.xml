@@ -17,4 +17,5 @@
     <string name="com.twitter.sdk.android.CONSUMER_KEY">YVrM0CDcyIridwlgNnH6HJdel</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">93revWOCh9bsc1nhR9pUYuvfLdqGFj7TOg64yz8AGqr0FpyCBJ</string>
     <string name="login">Login</string>
+    <string name="help_me_improve">Help me improve</string>
 </resources>
