@@ -237,14 +237,8 @@ public class TweetActionsFragment extends Fragment {
                         }
                     });
                 }
-
-
-
-
             }
         });
-
-
 
         /**
          * 4/4 Share

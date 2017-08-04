@@ -333,7 +333,7 @@ public class HomeTimelineFragment extends Fragment {
 
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
             StatusesService statusesService = client.getStatusesService();
-            retrofit2.Call<List<Tweet>> call = statusesService.homeTimeline(
+            Call<List<Tweet>> call = statusesService.homeTimeline(
                     null,
                     ((mostRecentId == 0)?null:(mostRecentId)), // Returns results with an ID greater than, more recent than this
                     null, // last call's sinceid = current call's max(least recent) id
@@ -387,7 +387,7 @@ public class HomeTimelineFragment extends Fragment {
 
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
             StatusesService statusesService = client.getStatusesService();
-            retrofit2.Call<List<Tweet>> call = statusesService.homeTimeline(
+            Call<List<Tweet>> call = statusesService.homeTimeline(
                     null,
                     null,
                     ((leastRecentId == 0) ? null : (leastRecentId - 1)),

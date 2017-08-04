@@ -72,7 +72,7 @@ public class ReplyActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(ShowTweetActivity.newIntent(getApplicationContext(), mInReplyToStatusId));
+                finish();
             }
         });
 

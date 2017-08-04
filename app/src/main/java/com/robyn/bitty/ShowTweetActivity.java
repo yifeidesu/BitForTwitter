@@ -62,7 +62,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() { // already set parent ac, do i still need this?
             @Override
             public void onClick(View view) {
-                startActivity(MainActivity.newIntent(getApplicationContext()));
+                finish();
             }
         });
 
