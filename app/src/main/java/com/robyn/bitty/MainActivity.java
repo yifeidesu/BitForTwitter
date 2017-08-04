@@ -44,10 +44,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 
-// TODO: 7/23/2017 drawer
-
-// TODO: 7/29/2017 runtime add in the search view
-
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -56,10 +52,17 @@ public class MainActivity extends AppCompatActivity
     private String userImageUrlString;
 
     private FragmentManager mFragmentManager;
-    private Fragment mFragment;
+
+    private ImageView mDrawerProfileImg;
+    private TextView mDrawerScreenName;
 
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.networking_wrong_msg) TextView mNetworkingWrongMsg;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.drawer_nav_view)
+    NavigationView mDrawerNavView;
+    @BindView(R.id.bottom_nav_view)
+    BottomNavigationView mBottomNavView;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -103,35 +106,40 @@ public class MainActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        mNetworkingWrongMsg.setVisibility(View.GONE);
-
+        // top bar
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Home");
         }
 
-        DrawerLayout drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(
-                this, drawer_layout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer_layout.setDrawerListener(drawer_toggle);
-        drawer_toggle.syncState();
+        // bottom bar
+        mBottomNavView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        // drawer_layout content
-        NavigationView drawer_nav = (NavigationView) findViewById(R.id.drawer_nav_view);
-        drawer_nav.setNavigationItemSelectedListener(this);
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        // fragment in middle
+        mNetworkingWrongMsg.setVisibility(View.GONE);
 
         mFragmentManager = getSupportFragmentManager();
-        mFragment = mFragmentManager.findFragmentById(R.id.fragment_container_actions);
-        if (mFragment == null) {
-            mFragment = HomeTimelineFragment.newInstance();
+        Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment_container_actions);
+        if (fragment == null) {
+            fragment = HomeTimelineFragment.newInstance();
             mFragmentManager
                     .beginTransaction()
-                    .add(R.id.fragment_container_actions, mFragment)
+                    .add(R.id.fragment_container_actions, fragment)
                     .commit();
         }
+
+
+        // the drawer
+        ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.setDrawerListener(drawer_toggle);
+        drawer_toggle.syncState();
+
+        mDrawerNavView.setNavigationItemSelectedListener(this);
+        View drawerHeader = mDrawerNavView.getChildAt(0);
+        mDrawerProfileImg = (ImageView) drawerHeader.findViewById(R.id.profile_img_drawer);
+
+
     }
 
     public void composeTweet() {
@@ -146,9 +154,8 @@ public class MainActivity extends AppCompatActivity
     // for drawer
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -182,8 +189,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -204,17 +210,27 @@ public class MainActivity extends AppCompatActivity
 
                         ImageView profileImage = (ImageView) mToolbar.getChildAt(1);
 
+                        View drawerHeader = mDrawerNavView.getChildAt(0);
+                        mDrawerProfileImg = drawerHeader.findViewById(R.id.profile_img_drawer);
+
                         Glide.with(getApplicationContext()).load(userImageUrl)
                                 .asBitmap().into(new BitmapImageViewTarget(profileImage) {
                             @Override
                             protected void setResource(Bitmap resource) {
-                                Bitmap big = Bitmap.createScaledBitmap(resource, 90, 90, true);
+                                Bitmap navIconBitmap = Bitmap.createScaledBitmap(resource, 90, 90, true);
 
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), big);
-                                circularBitmapDrawable.setCircular(true);
+                                RoundedBitmapDrawable roundNavIconDrawable =
+                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), navIconBitmap);
+                                roundNavIconDrawable.setCircular(true);
 
-                                mToolbar.setNavigationIcon(circularBitmapDrawable);
+                                Bitmap headerProfileBitmap = Bitmap.createScaledBitmap(resource, 200, 200, true);
+
+                                RoundedBitmapDrawable roundHeaderDrawable =
+                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), headerProfileBitmap);
+                                roundHeaderDrawable.setCircular(true);
+
+                                mToolbar.setNavigationIcon(roundNavIconDrawable);
+                                mDrawerProfileImg.setImageDrawable(roundHeaderDrawable);
                             }
                         });
 

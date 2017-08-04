@@ -35,8 +35,6 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     private ScrollView mScrollView;
 
-
-
     public static Intent newIntent(Context context, long tweetId) {
         Intent intent = new Intent(context, ShowTweetActivity.class);
         intent.putExtra(EXTRA_TWEET_ID, tweetId);
