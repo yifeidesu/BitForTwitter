@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item
+            android:id="@+id/drawer_login"
+            android:icon="@drawable/ic_login"
+            android:title="@string/login"/>
+    </group>
+
+    <group
+        android:id="@+id/more"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/drawer_feedback"
+            android:title="@string/help_me_improve"
+            android:icon="@drawable/ic_reply">
+        </item>
+    </group>
+
+</menu>

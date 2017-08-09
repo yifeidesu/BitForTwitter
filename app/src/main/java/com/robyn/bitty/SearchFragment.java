@@ -77,9 +77,6 @@ public class SearchFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-
-
-
         return view;
     }
 

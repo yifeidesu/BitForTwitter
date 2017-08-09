@@ -139,7 +139,6 @@ public class MainActivity extends AppCompatActivity
         View drawerHeader = mDrawerNavView.getChildAt(0);
         mDrawerProfileImg = (ImageView) drawerHeader.findViewById(R.id.profile_img_drawer);
 
-
     }
 
     public void composeTweet() {

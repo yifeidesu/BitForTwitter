@@ -2,10 +2,12 @@
 <resources>
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#263238</color>
-    <color name="colorAccent">#ff1da1f2</color>
+    <color name="colorAccent">#FF5BAAF4</color>
 
     <color name="black_overlay">#66000000</color>
 
     <color name="gray50">#ECEFF1</color>
+
+    <color name="white">#FFFFFF</color>
 
 </resources>

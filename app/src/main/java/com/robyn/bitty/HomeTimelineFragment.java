@@ -1,6 +1,7 @@
 package com.robyn.bitty;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.core.services.FavoriteService;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.TweetView;
 
@@ -175,12 +177,12 @@ public class HomeTimelineFragment extends Fragment {
 
         @BindView(R.id.reply) ImageView replyButton;
         @BindView(R.id.retweet) ImageView reTweetButton;
-        @BindView(R.id.favo) ImageView likeButton;
+        @BindView(R.id.favo) ImageView favoButton;
         @BindView(R.id.share) ImageView shareButton;
 
         @BindView(R.id.reply_layout) LinearLayout replyLayout;
         @BindView(R.id.retweet_layout) LinearLayout retweetLayout;
-        @BindView(R.id.favo_layout) LinearLayout likeLayout;
+        @BindView(R.id.favo_layout) LinearLayout favoLayout;
         @BindView(R.id.share_layout) LinearLayout shareLayout;
 
         HomeHolder(LayoutInflater inflater, ViewGroup parent) {
@@ -316,6 +318,51 @@ public class HomeTimelineFragment extends Fragment {
 
                 }
             });
+
+            if (tweet.favorited) {
+                holder.favoButton
+                        .getDrawable()
+                        .setColorFilter(getResources()
+                                .getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
+            }
+            holder.favoLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean boolFavo = holder.favoButton.getColorFilter() != null; // color filter != null means the tweet is favoed.
+                    TwitterApiClient client = TwitterCore.getInstance().getApiClient();
+                    FavoriteService favoriteService = client.getFavoriteService();
+                    if (boolFavo) {
+                        Call<Tweet> unFavoCall = favoriteService.destroy(tweetId, null);
+                        unFavoCall.enqueue(new Callback<Tweet>() {
+                            @Override
+                            public void success(Result<Tweet> result) {
+                                holder.favoButton.getDrawable().clearColorFilter();
+                                Log.i(TAG, "unfavoed");
+                            }
+
+                            @Override
+                            public void failure(TwitterException exception) {
+                                Log.i(TAG, "unfavo failed, msg = " + exception.getMessage());
+                            }
+                        });
+                    } else {
+                        Call<Tweet> favoCall = favoriteService.create(tweetId, null);
+                        favoCall.enqueue(new Callback<Tweet>() {
+                            @Override
+                            public void success(Result<Tweet> result) {
+                                holder.favoButton.getDrawable()
+                                        .setColorFilter(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
+                                Log.i(TAG, "favoed");
+                            }
+
+                            @Override
+                            public void failure(TwitterException exception) {
+                                Log.i(TAG, "favo failed, msg = " + exception.getMessage());
+                            }
+                        });
+                    }
+                }
+            });
         }
 
         @Override
@@ -323,6 +370,7 @@ public class HomeTimelineFragment extends Fragment {
             return mTweets.size();
         }
     }
+
 
     /**
      * when pull refresh, perform this task to get new tweets
