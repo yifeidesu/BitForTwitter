@@ -1,4 +1,4 @@
-package com.robyn.bitty;
+package com.robyn.bitty.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.robyn.bitty.R;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;

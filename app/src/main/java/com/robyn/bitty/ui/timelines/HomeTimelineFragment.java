@@ -1,4 +1,4 @@
-package com.robyn.bitty;
+package com.robyn.bitty.ui.timelines;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.robyn.bitty.R;
+import com.robyn.bitty.ui.ShowTweetActivity;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterApiClient;

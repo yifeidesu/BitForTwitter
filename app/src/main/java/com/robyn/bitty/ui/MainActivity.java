@@ -1,4 +1,4 @@
-package com.robyn.bitty;
+package com.robyn.bitty.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +27,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.robyn.bitty.Bitty;
+import com.robyn.bitty.BuildConfig;
+import com.robyn.bitty.MakeSound;
+import com.robyn.bitty.R;
+import com.robyn.bitty.ui.timelines.HomeTimelineFragment;
+import com.robyn.bitty.ui.timelines.SearchFragment;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterApiClient;

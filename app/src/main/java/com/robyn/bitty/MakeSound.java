@@ -8,11 +8,12 @@ import android.media.SoundPool;
 /**
  * Created by yifei on 7/30/2017.
  *
- * to notify when build finishes. Remove before production release
+ * to notify when build finishes. Remove before product release
  */
 
-class MakeSound {
-    void playSound(Context context) {
+public class MakeSound {
+
+    public void playSound(Context context) {
         SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
 
         int soundId = soundPool.load(context, R.raw.correct, 1);
