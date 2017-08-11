@@ -37,7 +37,7 @@ public class ReplyActivity extends AppCompatActivity {
     private String mScreenName;
     private String mReplyTextInput;
 
-    @BindView(R.id.user_screen_id)
+    @BindView(R.id.user_screen_name)
     TextView mScreenNameTextView;
 
     @BindView(R.id.reply_button)

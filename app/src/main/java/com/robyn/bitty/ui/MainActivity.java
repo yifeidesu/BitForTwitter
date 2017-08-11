@@ -198,25 +198,36 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private class CheckAuthTask extends AsyncTask<Void, Void, Void> {
+    private class CheckAuthTask extends AsyncTask<Void, Void, User> {
+
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected User doInBackground(Void... voids) {
+
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
             AccountService accountService = client.getAccountService();
+
             final Call<User> call = accountService.verifyCredentials(false, true, false);
+
             call.enqueue(new Callback<User>() {
                 @Override
                 public void success(Result<User> result) {
                     try {
-                        userImageUrl = new URL(result.data.profileImageUrlHttps);
+                        User user = result.data;
+
+                        userImageUrl = new URL(user.profileImageUrlHttps);
                         userImageUrlString = userImageUrl.toString();
+
                         String string = result.response.toString();
                         Log.i(TAG, string);
 
                         ImageView profileImage = (ImageView) mToolbar.getChildAt(1);
 
                         View drawerHeader = mDrawerNavView.getChildAt(0);
+
                         mDrawerProfileImg = drawerHeader.findViewById(R.id.profile_img_drawer);
+                        mDrawerScreenName = drawerHeader.findViewById(R.id.screen_name_drawer);
+
+                        mDrawerScreenName.setText(user.screenName);
 
                         Glide.with(getApplicationContext()).load(userImageUrl)
                                 .asBitmap().into(new BitmapImageViewTarget(profileImage) {
@@ -244,6 +255,7 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                     Log.i(TAG, result.data.name);
+
                     new MakeSound().playSound(getApplicationContext());
                     mNetworkingWrongMsg.setVisibility(View.GONE);
                 }
@@ -253,15 +265,17 @@ public class MainActivity extends AppCompatActivity
                     startActivity(LoginActivity.newIntent(getApplicationContext()));
                     mNetworkingWrongMsg.setVisibility(View.VISIBLE);
                     Log.i(TAG, exception.getMessage());
+                    cancel(false);
                 }
             });
+
             return null;
+
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.i(TAG, "url = " + userImageUrlString);
+        protected void onPostExecute(User user) {
+            super.onPostExecute(user);
             cancel(false);
         }
     }
