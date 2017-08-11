@@ -24,15 +24,15 @@ public class Bitty extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Twitter.initialize(this);
+        //Twitter.initialize(this);
 
-//        TwitterConfig config = new TwitterConfig.Builder(this)
-//                .logger(new DefaultLogger(Log.DEBUG))
-//                .twitterAuthConfig(new TwitterAuthConfig
-//                        ("CONSUMER_KEY", "CONSUMER_SECRET"))
-//                .debug(true)
-//                .build();
-//        Twitter.initialize(config);
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig
+                        (BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
 
         final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);

@@ -11,6 +11,9 @@ android {
         versionName "beta1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        buildConfigField("String", "CONSUMER_KEY", CONSUMER_KEY)
+        buildConfigField("String", "CONSUMER_SECRET", CONSUMER_SECRET)
+
     }
     buildTypes {
         release {
