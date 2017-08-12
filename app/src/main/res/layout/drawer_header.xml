@@ -22,9 +22,10 @@
 
     <TextView
         android:id="@+id/screen_name_drawer"
+        android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
 
 </LinearLayout>

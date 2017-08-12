@@ -1,7 +1,6 @@
 package com.robyn.bitty.ui.timelines;
 
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.robyn.bitty.ColorToggle;
 import com.robyn.bitty.R;
 import com.robyn.bitty.ui.ShowTweetActivity;
 import com.twitter.sdk.android.core.Callback;
@@ -63,9 +63,8 @@ public class HomeTimelineFragment extends Fragment {
     private Button mButtonLoadMore;
     //private ProgressBar mProgressBar;
 
-    @BindView(R.id.process_bar) ProgressBar mProgressBar;
-
-
+    @BindView(R.id.process_bar)
+    ProgressBar mProgressBar;
 
     public static HomeTimelineFragment newInstance() {
         
@@ -83,9 +82,8 @@ public class HomeTimelineFragment extends Fragment {
         setRetainInstance(true);
 
         new RefreshTask().execute();
+        Log.i(TAG, "home line oncreate");
 
-        mProfileImgUrlString = getArguments().getString(ARG_PROFILE_IMG_URL);
-        Log.i(TAG, "url = " + mProfileImgUrlString);
     }
 
     @Nullable
@@ -95,7 +93,6 @@ public class HomeTimelineFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_hometimeline, container, false);
         ButterKnife.bind(this, view);
 
-        //mProgressBar = view.findViewById(R.id.process_bar);
         mProgressBar.setVisibility(VISIBLE); // init loading. swipeRefresh progressBar not show here
 
         // setup recyclerView
@@ -155,7 +152,6 @@ public class HomeTimelineFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-
                     Log.i(TAG, "reached bottom + pull task called");
                 }
             }
@@ -179,7 +175,7 @@ public class HomeTimelineFragment extends Fragment {
 
         @BindView(R.id.reply) ImageView replyButton;
         @BindView(R.id.retweet) ImageView reTweetButton;
-        @BindView(R.id.favo) ImageView favoButton;
+        @BindView(R.id.favo) ImageView favoImage;
         @BindView(R.id.share) ImageView shareButton;
 
         @BindView(R.id.reply_layout) LinearLayout replyLayout;
@@ -322,15 +318,16 @@ public class HomeTimelineFragment extends Fragment {
             });
 
             if (tweet.favorited) {
-                holder.favoButton
-                        .getDrawable()
-                        .setColorFilter(getResources()
-                                .getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
+                ColorToggle.setColorFilter(holder.favoImage, getContext());
+//                holder.favoImage
+//                        .getDrawable()
+//                        .setColorFilter(getResources()
+//                                .getColor(R.color.favoRed), PorterDuff.Mode.SRC_IN);
             }
             holder.favoLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    boolean boolFavo = holder.favoButton.getColorFilter() != null; // color filter != null means the tweet is favoed.
+                    boolean boolFavo = holder.favoImage.getColorFilter() != null; // color filter != null means the tweet is favoed.
                     TwitterApiClient client = TwitterCore.getInstance().getApiClient();
                     FavoriteService favoriteService = client.getFavoriteService();
                     if (boolFavo) {
@@ -338,7 +335,7 @@ public class HomeTimelineFragment extends Fragment {
                         unFavoCall.enqueue(new Callback<Tweet>() {
                             @Override
                             public void success(Result<Tweet> result) {
-                                holder.favoButton.getDrawable().clearColorFilter();
+                                holder.favoImage.getDrawable().clearColorFilter();
                                 Log.i(TAG, "unfavoed");
                             }
 
@@ -348,12 +345,13 @@ public class HomeTimelineFragment extends Fragment {
                             }
                         });
                     } else {
-                        Call<Tweet> favoCall = favoriteService.create(tweetId, null);
+                        final Call<Tweet> favoCall = favoriteService.create(tweetId, null);
                         favoCall.enqueue(new Callback<Tweet>() {
                             @Override
                             public void success(Result<Tweet> result) {
-                                holder.favoButton.getDrawable()
-                                        .setColorFilter(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
+                                ColorToggle.setColorFilter(holder.favoImage, getContext());
+//                                holder.favoImage.getDrawable()
+//                                        .setColorFilter(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
                                 Log.i(TAG, "favoed");
                             }
 
@@ -380,6 +378,7 @@ public class HomeTimelineFragment extends Fragment {
     private class RefreshTask extends AsyncTask<Void,Void,List<Tweet>> {
         @Override
         protected List<Tweet> doInBackground(Void... voids) {
+            Log.i(TAG, "RefreshTask doInBackground called");
 
             TwitterApiClient client = TwitterCore.getInstance().getApiClient();
             StatusesService statusesService = client.getStatusesService();
@@ -391,6 +390,7 @@ public class HomeTimelineFragment extends Fragment {
             call.enqueue(new Callback<List<Tweet>>() {
                 @Override
                 public void success(Result<List<Tweet>> result) {
+                    Log.i(TAG, "RefreshTask call success result.size = " + result.data.size());
 
                     if (result.data.size() == 0) {
                         Toast.makeText(getContext(), "no new tweets o_O", Toast.LENGTH_LONG).show();
@@ -405,8 +405,6 @@ public class HomeTimelineFragment extends Fragment {
                         setMostRecentId();
                         setLeastRecentId();
                     }
-
-                    Log.i(TAG, "mTweetsUpdate.size() = " + String.valueOf(result.data.size()));
                 }
                 @Override
                 public void failure(TwitterException exception) {

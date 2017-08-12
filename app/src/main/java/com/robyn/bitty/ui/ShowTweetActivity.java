@@ -64,13 +64,11 @@ public class ShowTweetActivity extends AppCompatActivity {
             }
         });
 
-        mScrollView = (ScrollView) findViewById(R.id.scrollView);
+        mScrollView = findViewById(R.id.tweet_layout);
 
 
 // TODO: 7/31/2017 custom tweet view
         // todo inflate a fg showing the aciton buttons w/o focus, by clicking the tweetview
-
-        // TODO: 7/25/2017 delete reply box views
 
     }
 
@@ -109,13 +107,13 @@ public class ShowTweetActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container_actions);
+            Fragment fragment = fragmentManager.findFragmentById(R.id.actions_fragment_container);
             if (fragment == null) {
                 fragment = TweetActionsFragment.newInstance(
                         mTweetId, mScreenName);
                 fragmentManager
                         .beginTransaction()
-                        .add(R.id.fragment_container_actions, fragment)
+                        .add(R.id.actions_fragment_container, fragment)
                         .commit();
             }
             cancel(false);

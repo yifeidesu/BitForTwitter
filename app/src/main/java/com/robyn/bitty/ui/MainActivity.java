@@ -45,6 +45,7 @@ import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,9 +63,12 @@ public class MainActivity extends AppCompatActivity
     private ImageView mDrawerProfileImg;
     private TextView mDrawerScreenName;
 
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.networking_wrong_msg) TextView mNetworkingWrongMsg;
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.networking_wrong_msg)
+    TextView mNetworkingWrongMsg;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
     @BindView(R.id.drawer_nav_view)
     NavigationView mDrawerNavView;
     @BindView(R.id.bottom_nav_view)
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity
 
     void replaceFragment(Fragment fragment) {
         mFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_actions, fragment)
+                .replace(R.id.fragment_container, fragment)
                 .commit();
     }
 
@@ -125,12 +129,12 @@ public class MainActivity extends AppCompatActivity
         mNetworkingWrongMsg.setVisibility(View.GONE);
 
         mFragmentManager = getSupportFragmentManager();
-        Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment_container_actions);
+        Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
             fragment = HomeTimelineFragment.newInstance();
             mFragmentManager
                     .beginTransaction()
-                    .add(R.id.fragment_container_actions, fragment)
+                    .add(R.id.fragment_container, fragment)
                     .commit();
         }
 
@@ -227,7 +231,9 @@ public class MainActivity extends AppCompatActivity
                         mDrawerProfileImg = drawerHeader.findViewById(R.id.profile_img_drawer);
                         mDrawerScreenName = drawerHeader.findViewById(R.id.screen_name_drawer);
 
-                        mDrawerScreenName.setText(user.screenName);
+                        String atScreenName = "@"+user.screenName;
+
+                        mDrawerScreenName.setText(atScreenName);
 
                         Glide.with(getApplicationContext()).load(userImageUrl)
                                 .asBitmap().into(new BitmapImageViewTarget(profileImage) {
@@ -258,6 +264,7 @@ public class MainActivity extends AppCompatActivity
 
                     new MakeSound().playSound(getApplicationContext());
                     mNetworkingWrongMsg.setVisibility(View.GONE);
+
                 }
 
                 @Override
@@ -270,7 +277,6 @@ public class MainActivity extends AppCompatActivity
             });
 
             return null;
-
         }
 
         @Override
