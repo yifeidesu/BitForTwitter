@@ -10,9 +10,20 @@ import android.widget.ImageView;
 
 public class ColorToggle {
 
-    public static void setColorFilter(ImageView imageView, Context context) {
-        imageView.getDrawable()
-                .setColorFilter(context.getResources().getColor(R.color.favoRed), PorterDuff.Mode.SRC_IN);
+    /**
+     * this method sets the heart image color based on callback result.
+     *
+     * @param isFavoed based on callback result. isFavoed = result.data.favoed;
+     * @param favoImage
+     * @param context
+     */
+    public static void setColorFilter(boolean isFavoed, ImageView favoImage, Context context) {
+        if (isFavoed) {
+            favoImage.getDrawable()
+                    .setColorFilter(context.getResources()
+                            .getColor(R.color.favoRed), PorterDuff.Mode.SRC_IN);
+        } else {
+            favoImage.getDrawable().clearColorFilter();
+        }
     }
-
 }

@@ -317,25 +317,24 @@ public class HomeTimelineFragment extends Fragment {
                 }
             });
 
-            if (tweet.favorited) {
-                ColorToggle.setColorFilter(holder.favoImage, getContext());
-//                holder.favoImage
-//                        .getDrawable()
-//                        .setColorFilter(getResources()
-//                                .getColor(R.color.favoRed), PorterDuff.Mode.SRC_IN);
-            }
+            final boolean isFavoed = tweet.favorited;
+
+            ColorToggle.setColorFilter(isFavoed, holder.favoImage, getContext());
+
             holder.favoLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    boolean boolFavo = holder.favoImage.getColorFilter() != null; // color filter != null means the tweet is favoed.
+
                     TwitterApiClient client = TwitterCore.getInstance().getApiClient();
                     FavoriteService favoriteService = client.getFavoriteService();
-                    if (boolFavo) {
+                    if (isFavoed) {
                         Call<Tweet> unFavoCall = favoriteService.destroy(tweetId, null);
                         unFavoCall.enqueue(new Callback<Tweet>() {
                             @Override
                             public void success(Result<Tweet> result) {
-                                holder.favoImage.getDrawable().clearColorFilter();
+                                //holder.favoImage.getDrawable().clearColorFilter();
+                                ColorToggle.setColorFilter(result.data.favorited, holder.favoImage,
+                                        getContext());
                                 Log.i(TAG, "unfavoed");
                             }
 
@@ -349,7 +348,7 @@ public class HomeTimelineFragment extends Fragment {
                         favoCall.enqueue(new Callback<Tweet>() {
                             @Override
                             public void success(Result<Tweet> result) {
-                                ColorToggle.setColorFilter(holder.favoImage, getContext());
+                                ColorToggle.setColorFilter(result.data.favorited, holder.favoImage, getContext());
 //                                holder.favoImage.getDrawable()
 //                                        .setColorFilter(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
                                 Log.i(TAG, "favoed");
