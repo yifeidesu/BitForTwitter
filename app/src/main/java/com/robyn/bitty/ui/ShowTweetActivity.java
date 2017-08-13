@@ -31,6 +31,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     private Tweet mTweet;
     private long mTweetId;
+    private boolean mIsFavoed;
     private String mScreenName;
 
     private ScrollView mScrollView;
@@ -84,6 +85,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                 @Override
                 public void success(Result<Tweet> result) {
                     mTweet = result.data;
+                    mIsFavoed = mTweet.favorited;
                     mScreenName = mTweet.user.screenName;
 
                     TweetView tweetView = new TweetView(getApplicationContext(), mTweet);
@@ -110,7 +112,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             Fragment fragment = fragmentManager.findFragmentById(R.id.actions_fragment_container);
             if (fragment == null) {
                 fragment = TweetActionsFragment.newInstance(
-                        mTweetId, mScreenName);
+                        mTweetId, mIsFavoed, mScreenName);
                 fragmentManager
                         .beginTransaction()
                         .add(R.id.actions_fragment_container, fragment)

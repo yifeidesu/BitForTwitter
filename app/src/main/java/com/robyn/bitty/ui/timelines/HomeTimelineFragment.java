@@ -30,7 +30,6 @@ import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.services.FavoriteService;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.TweetView;
 
@@ -317,49 +316,51 @@ public class HomeTimelineFragment extends Fragment {
                 }
             });
 
-            final boolean isFavoed = tweet.favorited;
-
-            ColorToggle.setColorFilter(isFavoed, holder.favoImage, getContext());
+            ColorToggle.showHeartColor(tweet.favorited, holder.favoImage, getContext());
 
             holder.favoLayout.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View view) {
 
-                    TwitterApiClient client = TwitterCore.getInstance().getApiClient();
-                    FavoriteService favoriteService = client.getFavoriteService();
-                    if (isFavoed) {
-                        Call<Tweet> unFavoCall = favoriteService.destroy(tweetId, null);
-                        unFavoCall.enqueue(new Callback<Tweet>() {
-                            @Override
-                            public void success(Result<Tweet> result) {
-                                //holder.favoImage.getDrawable().clearColorFilter();
-                                ColorToggle.setColorFilter(result.data.favorited, holder.favoImage,
-                                        getContext());
-                                Log.i(TAG, "unfavoed");
-                            }
+                    ColorToggle.toggleHeartColor(tweet.favorited, tweetId, holder.favoImage, getContext());
+                    Log.i(TAG, "toggle color called");
 
-                            @Override
-                            public void failure(TwitterException exception) {
-                                Log.i(TAG, "unfavo failed, msg = " + exception.getMessage());
-                            }
-                        });
-                    } else {
-                        final Call<Tweet> favoCall = favoriteService.create(tweetId, null);
-                        favoCall.enqueue(new Callback<Tweet>() {
-                            @Override
-                            public void success(Result<Tweet> result) {
-                                ColorToggle.setColorFilter(result.data.favorited, holder.favoImage, getContext());
-//                                holder.favoImage.getDrawable()
-//                                        .setColorFilter(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
-                                Log.i(TAG, "favoed");
-                            }
-
-                            @Override
-                            public void failure(TwitterException exception) {
-                                Log.i(TAG, "favo failed, msg = " + exception.getMessage());
-                            }
-                        });
-                    }
+//                    TwitterApiClient client = TwitterCore.getInstance().getApiClient();
+//                    FavoriteService favoriteService = client.getFavoriteService();
+//                    if (isFavoed) {
+//                        Call<Tweet> unFavoCall = favoriteService.destroy(tweetId, null);
+//                        unFavoCall.enqueue(new Callback<Tweet>() {
+//                            @Override
+//                            public void success(Result<Tweet> result) {
+//                                //holder.favoImage.getDrawable().clearColorFilter();
+//                                ColorToggle.toggleHeartColor(result.data.favorited, holder.favoImage,
+//                                        getContext());
+//                                Log.i(TAG, "unfavoed");
+//                            }
+//
+//                            @Override
+//                            public void failure(TwitterException exception) {
+//                                Log.i(TAG, "unfavo failed, msg = " + exception.getMessage());
+//                            }
+//                        });
+//                    } else {
+//                        final Call<Tweet> favoCall = favoriteService.create(tweetId, null);
+//                        favoCall.enqueue(new Callback<Tweet>() {
+//                            @Override
+//                            public void success(Result<Tweet> result) {
+//                                ColorToggle.toggleHeartColor(result.data.favorited, holder.favoImage, getContext());
+////                                holder.favoImage.getDrawable()
+////                                        .toggleHeartColor(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
+//                                Log.i(TAG, "favoed");
+//                            }
+//
+//                            @Override
+//                            public void failure(TwitterException exception) {
+//                                Log.i(TAG, "favo failed, msg = " + exception.getMessage());
+//                            }
+//                        });
+//                    }
                 }
             });
         }

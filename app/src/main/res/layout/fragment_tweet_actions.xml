@@ -55,7 +55,8 @@
             android:layout_gravity="center|right"
             android:src="@drawable/ic_like"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/favoed"/>
         <TextView
             android:layout_gravity="center|start"
             android:textSize="12sp"
