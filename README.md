@@ -7,14 +7,14 @@
 
 ## Dependencies
 
+*	Twitter SDK for Android
+*	OkHttp3
+*	Glide
+*	ButterKnife
 *	Android AppCompat Library v7
 *	Android Design Library
 *	Android RecyclerView Library v7
 *	Android Support Library v4
-*	ButterKnife
-*	Glide
-*	OkHttp3
-*	Twitter SDK for Android
 
 ## Usage
 Copy your twitter api tokens into gradle.properties like this:
