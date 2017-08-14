@@ -16,6 +16,14 @@
 *	OkHttp3
 *	Twitter SDK for Android
 
+## Usage
+Copy your twitter api tokens into gradle.properties like this:
+
+```
+CONSUMER_KEY="your_consumer_key_here"
+CONSUMER_SECRET="your_consumer_secret_key_here"
+```
+
 ## Screenshots
 <img src="https://user-images.githubusercontent.com/23082500/28901343-85a77b54-77c5-11e7-8d15-10071f6f6461.jpg">
 
