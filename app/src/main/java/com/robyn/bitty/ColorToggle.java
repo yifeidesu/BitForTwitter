@@ -41,23 +41,19 @@ public class ColorToggle {
     /**
      * For click actions.
      *
-     * @param isFavoed to decide if sent a create or destroy call
+     *
      * @param tweetId sent a create/destroy favo call for the tweet of this id
      * @param favoImage
      * @param context
      */
-    public static void toggleHeartColor(boolean isFavoed,
-                                        long tweetId,
+    public static void toggleHeartColor(long tweetId,
                                         final ImageView favoImage,
                                         final Context context) {
-
-        // check the newest isfavoed
 
         TwitterApiClient client = TwitterCore.getInstance().getApiClient();
         FavoriteService favoriteService = client.getFavoriteService();
 
         favoTweet(tweetId, favoImage, context, favoriteService);
-
     }
 
     private static void favoTweet(final long tweetId, final ImageView favoImage, final Context context, final FavoriteService favoriteService) {
@@ -65,7 +61,9 @@ public class ColorToggle {
         favoCall.enqueue(new Callback<Tweet>() {
             @Override
             public void success(Result<Tweet> result) {
-                colorHeart(favoImage, context);
+                favoImage.setColorFilter(context
+                        .getResources()
+                        .getColor(R.color.favoRed), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
@@ -80,24 +78,13 @@ public class ColorToggle {
         unFavoCall.enqueue(new Callback<Tweet>() {
             @Override
             public void success(Result<Tweet> result) {
-                clearHeart(favoImage);
+                favoImage.clearColorFilter();
             }
 
             @Override
             public void failure(TwitterException exception) {
-
                 exception.getStackTrace();
             }
         });
-    }
-
-    static void colorHeart(ImageView heartImage, Context context) {
-        heartImage.setColorFilter(context
-                .getResources()
-                .getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
-    }
-
-    static void clearHeart(ImageView heartImage) {
-        heartImage.clearColorFilter();
     }
 }

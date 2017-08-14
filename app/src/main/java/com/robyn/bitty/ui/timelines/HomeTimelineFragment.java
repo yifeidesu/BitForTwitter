@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.robyn.bitty.ColorToggle;
@@ -181,6 +182,8 @@ public class HomeTimelineFragment extends Fragment {
         @BindView(R.id.retweet_layout) LinearLayout retweetLayout;
         @BindView(R.id.favo_layout) LinearLayout favoLayout;
         @BindView(R.id.share_layout) LinearLayout shareLayout;
+        @BindView(R.id.notesNum) TextView notesNum;
+        @BindView(R.id.notesText) TextView notesTextView;
 
         HomeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item, parent, false));
@@ -188,6 +191,7 @@ public class HomeTimelineFragment extends Fragment {
             itemView.setOnClickListener(this);
 
             ButterKnife.bind(this, itemView); // must in public class
+
         }
 
         @Override
@@ -220,6 +224,12 @@ public class HomeTimelineFragment extends Fragment {
             final Tweet tweet = mTweets.get(position);
             final long tweetId = tweet.getId();
             TweetView tweetView = new TweetView(getContext(), tweet);
+
+            int notes = tweet.favoriteCount + tweet.retweetCount;
+            if (notes != 0) {
+                holder.notesNum.setText(String.valueOf(notes));
+                holder.notesTextView.setVisibility(VISIBLE);
+            }
 
             // remove the top_right twitter icon
             tweetView.removeViewAt(4);
@@ -323,44 +333,9 @@ public class HomeTimelineFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    ColorToggle.toggleHeartColor(tweet.favorited, tweetId, holder.favoImage, getContext());
+                    ColorToggle.toggleHeartColor(tweetId, holder.favoImage, getContext());
                     Log.i(TAG, "toggle color called");
 
-//                    TwitterApiClient client = TwitterCore.getInstance().getApiClient();
-//                    FavoriteService favoriteService = client.getFavoriteService();
-//                    if (isFavoed) {
-//                        Call<Tweet> unFavoCall = favoriteService.destroy(tweetId, null);
-//                        unFavoCall.enqueue(new Callback<Tweet>() {
-//                            @Override
-//                            public void success(Result<Tweet> result) {
-//                                //holder.favoImage.getDrawable().clearColorFilter();
-//                                ColorToggle.toggleHeartColor(result.data.favorited, holder.favoImage,
-//                                        getContext());
-//                                Log.i(TAG, "unfavoed");
-//                            }
-//
-//                            @Override
-//                            public void failure(TwitterException exception) {
-//                                Log.i(TAG, "unfavo failed, msg = " + exception.getMessage());
-//                            }
-//                        });
-//                    } else {
-//                        final Call<Tweet> favoCall = favoriteService.create(tweetId, null);
-//                        favoCall.enqueue(new Callback<Tweet>() {
-//                            @Override
-//                            public void success(Result<Tweet> result) {
-//                                ColorToggle.toggleHeartColor(result.data.favorited, holder.favoImage, getContext());
-////                                holder.favoImage.getDrawable()
-////                                        .toggleHeartColor(getResources().getColor(R.color.tw__composer_red), PorterDuff.Mode.SRC_IN);
-//                                Log.i(TAG, "favoed");
-//                            }
-//
-//                            @Override
-//                            public void failure(TwitterException exception) {
-//                                Log.i(TAG, "favo failed, msg = " + exception.getMessage());
-//                            }
-//                        });
-//                    }
                 }
             });
         }
