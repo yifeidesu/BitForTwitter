@@ -11,9 +11,9 @@
 *	OkHttp3
 *	Glide
 *	ButterKnife
-*	Android AppCompat Library v7
 *	Android Design Library
 *	Android RecyclerView Library v7
+*	Android AppCompat Library v7
 *	Android Support Library v4
 
 ## Usage
