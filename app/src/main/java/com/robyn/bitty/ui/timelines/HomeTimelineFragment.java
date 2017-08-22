@@ -326,14 +326,14 @@ public class HomeTimelineFragment extends Fragment {
                 }
             });
 
-            ColorToggle.showHeartColor(tweet.favorited, holder.favoImage, getContext());
+            ColorToggle.INSTANCE.showHeartColor(tweet.favorited, holder.favoImage, getContext());
 
             holder.favoLayout.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
 
-                    ColorToggle.toggleHeartColor(tweetId, holder.favoImage, getContext());
+                    ColorToggle.INSTANCE.toggleHeartColor(tweetId, holder.favoImage, getContext());
                     Log.i(TAG, "toggle color called");
 
                 }
