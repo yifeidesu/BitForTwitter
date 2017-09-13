@@ -40,6 +40,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_hometimeline.*
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -67,8 +68,8 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
             mButtonLoadMore: Button? = null
     //private ProgressBar mProgressBar;
 
-    @BindView(R.id.progress_bar)
-    lateinit var mProgressBar: ProgressBar
+//    @BindView(R.id.progress_bar)
+//    lateinit var mProgressBar: ProgressBar
 
 
     /**
@@ -127,7 +128,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
         val view = inflater.inflate(R.layout.fragment_hometimeline, container, false)
         ButterKnife.bind(this, view)
 
-        mProgressBar = view.findViewById(R.id.progress_bar)
+        //mProgressBar = view.findViewById(R.id.progress_bar)
 
         // setup recyclerView
         mRecyclerViewHome = view.findViewById(R.id.home_timeline)
@@ -187,8 +188,8 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
 
         // TODO: 7/21/2017 double tap to go back to top
 
-        if (mProgressBar!=null) {
-            mProgressBar.visibility = View.GONE
+        if (progress_bar!=null) {
+            progress_bar.visibility = View.GONE
         }
         return view
     }
@@ -366,7 +367,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
         override fun onPostExecute(tweets: List<Tweet>) {
             super.onPostExecute(tweets)
             Log.i(TAG, "RefreshTask onPostExecute called")
-            mProgressBar!!.visibility = View.GONE
+            progress_bar!!.visibility = View.GONE
             cancel(false)
         }
     }
@@ -523,7 +524,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
             mAdapter!!.notifyItemRangeChanged(0, mTweets.size)
         }
 
-        mProgressBar?.visibility = View.GONE
+        progress_bar?.visibility = View.GONE
     }
 
 //    private fun setMostRecentId() {

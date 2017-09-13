@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                startActivity(MainActivity.newIntent(getApplicationContext()));
+                startActivity(MainActivity.Companion.newIntent(getApplicationContext()));
                 Log.i(TAG, "login session success!");
             }
 
