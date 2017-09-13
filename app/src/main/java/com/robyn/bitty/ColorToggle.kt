@@ -40,8 +40,6 @@ object ColorToggle {
 
     /**
      * For click actions.
-     *
-     *
      * @param tweetId sent a create/destroy favo call for the tweet of this id
      * @param favoImage
      * @param context

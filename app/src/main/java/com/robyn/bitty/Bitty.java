@@ -11,6 +11,7 @@ import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterSession;
 
+import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -24,7 +25,7 @@ public class Bitty extends Application {
     public void onCreate() {
         super.onCreate();
 
-        //Twitter.initialize(this);
+        ButterKnife.setDebug(BuildConfig.DEBUG);
 
         TwitterConfig config = new TwitterConfig.Builder(this)
                 .logger(new DefaultLogger(Log.DEBUG))
