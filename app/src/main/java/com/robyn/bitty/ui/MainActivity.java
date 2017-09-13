@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mToolbar.getChildAt(0).setVisibility(View.VISIBLE);
-                    replaceFragment(HomeTimelineFragment.newInstance());
+                    replaceFragment(HomeTimelineFragment.Companion.newInstance());
                     return true;
                 case R.id.navigation_compose:
                     composeTweet();
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         mFragmentManager = getSupportFragmentManager();
         Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
-            fragment = HomeTimelineFragment.newInstance();
+            fragment = HomeTimelineFragment.Companion.newInstance();
             mFragmentManager
                     .beginTransaction()
                     .add(R.id.fragment_container, fragment)

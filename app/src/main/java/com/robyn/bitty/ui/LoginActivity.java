@@ -46,14 +46,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(Result<TwitterSession> result) {
                 startActivity(MainActivity.newIntent(getApplicationContext()));
-                Log.i(TAG, "login session success");
+                Log.i(TAG, "login session success!");
             }
 
             @Override
             public void failure(TwitterException exception) {
                 Toast.makeText(getApplicationContext(),
                         "Sorry. Auth failed.", Toast.LENGTH_LONG).show();
-                Log.i(TAG, "login session failed --> " + exception.getMessage());
+                Log.i(TAG, exception.getMessage());
             }
         });
     }
