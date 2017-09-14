@@ -16,14 +16,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 
-import com.robyn.bitty.ColorToggle
 import com.robyn.bitty.MyAsyncTasks.RefreshTask
-import com.robyn.bitty.R
 import com.robyn.bitty.ui.ShowTweetActivity
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
@@ -32,15 +27,19 @@ import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetui.TweetView
 
-import butterknife.BindView
 import butterknife.ButterKnife
 
 import android.support.v7.widget.RecyclerView.*
+import com.robyn.bitty.*
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_hometimeline.*
+import kotlinx.android.synthetic.main.fragment_tweet_actions.view.*
+import kotlinx.android.synthetic.main.item.view.*
+import kotlinx.android.synthetic.main.tweet_layout.view.*
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -60,60 +59,34 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
     lateinit var mRecyclerViewHome: RecyclerView
     private var mAdapter: HomeAdapter? = null
 
-    private var mostRecentId: Long = 0
-    private var leastRecentId: Long = 0
+    private var mMostRecentId: Long = 0
+    private var mLeastRecentId: Long = 0
     private val mProfileImgUrlString: String? = null
 
     private var
             mButtonLoadMore: Button? = null
     //private ProgressBar mProgressBar;
 
-//    @BindView(R.id.progress_bar)
-//    lateinit var mProgressBar: ProgressBar
-
-
-    /**
-     *  update tweet list based on response;
-     *
-     *  To avoid the tweet list to long, remove the tweets at the end of the list.
-     */
-    fun updateTweets() {
-        mTweets.addAll(0, mTweetsUpdate)
-        if (mTweets.size > 50) {
-            for (i in 50..mTweets.size) {
-                mTweets.removeAt(i)
-            }
-        }
-    }
+    lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        //val param = RefreshTask.MyParams(context, this)
-        //mTweetsUpdate = RefreshTask().execute(param).get().toMutableList()
-
-        getObservable()
+        disposable = getObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()) // receive on main thread
                 .subscribe(
                         {result ->
                             Log.i(TAG_SIZE, "RESPONSE SIZE =  ${result.size}")
-                            mTweetsUpdate = result.toMutableList()
-                            updateTweets() },
-                        {err -> Log.e(TAG_SIZE, err.message)},
-                        {
-                            updateRecyclerUI()
-                        })
-
-        //updateRecyclerUI()
-
-        Log.i(TAG, "home line oncreate, update tweets.size = ${mTweetsUpdate.size}")
+                            updateRecyclerUI(result) },
+                        {err -> Log.e(TAG_SIZE, err.message)}) // where to disoi
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
+        if (!disposable.isDisposed)
+            disposable.dispose()
     }
 
     override fun fetchComplete(list: List<Tweet>) {
@@ -138,7 +111,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
 
         mRecyclerViewHome.itemAnimator = null
         //UpdateUITask().execute()
-        updateRecyclerUI()
+        //updateRecyclerUI(mTweets)
 
         // set divider for recyclerView items
         val dividerItemDecoration = DividerItemDecoration(mRecyclerViewHome.context,
@@ -152,7 +125,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
             swipeLayout.isRefreshing = false
         }
 
-        // TODO recyclerview set on scroll listener for scroll down to load prev tweets
+        // TODO recyclerview set on scroll listener for scroll down to loadProfileImage prev tweets
 
         mButtonLoadMore = view.findViewById(R.id.load_more)
         mButtonLoadMore!!.visibility = View.GONE
@@ -201,11 +174,8 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
 
          private val mTweets = tweets
 
-
-
         init {
             notifyDataSetChanged() // ?
-
 
         }
 
@@ -218,38 +188,64 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
 
             // remove previous view if the holder is not empty,
             // otherwise holder shows multiple tweets in one single holder
-            if (holder.myTweetLayout.childCount != 0) {
-                holder.myTweetLayout.removeAllViews()
-            }
+//            if (holder.itemView.my_item_layout.childCount != 0) {
+//                holder.itemView.my_item_layout.removeAllViews()
+//            }
 
-            val tweet = mTweets[position]
+            val holderItemView = holder.itemView
+
+            val tweet = mTweets[position] // position in the recyclerview, not the list?!
             val tweetId = tweet.getId()
             val tweetView = TweetView(context, tweet)
 
             val notes = tweet.favoriteCount + tweet.retweetCount
             if (notes != 0) {
-                holder.notesNum!!.text = notes.toString()
-                holder.notesTextView!!.visibility = View.VISIBLE
+                holder.itemView.notesNum.text = notes.toString()
+                holder.itemView.notesText.visibility = View.VISIBLE
             }
 
+
             // remove the top_right twitter icon
-            tweetView.removeViewAt(4)
-            holder.myTweetLayout
-                    .addView(tweetView)
+//            tweetView.removeViewAt(4)
+//            holder.itemView.tweet_layout_mock.addView(tweetView)
 
             // to remove defualt listener comes w/ the tweetView object
-            holder.myTweetLayout.getChildAt(0).setOnClickListener(null)
+            //holder.itemView.tweet_layout_mock.getChildAt(0).setOnClickListener(null)
 
             val onClickShowTweetListener = View.OnClickListener {
+                Toast.makeText(context, "show tweet listner called",Toast.LENGTH_SHORT).show()
                 Log.i(TAG, "onClickShowTweetListener invoked")
                 startActivity(ShowTweetActivity.newIntent(context, tweetId))
             }
 
-            holder.myTweetLayout.getChildAt(0).setOnClickListener(onClickShowTweetListener)
+            //holder.itemView.tweet_layout_mock.getChildAt(0).setOnClickListener(onClickShowTweetListener)
 
-            holder.replyLayout!!.setOnClickListener(onClickShowTweetListener)
+            holder.itemView.my_item_layout.reply_layout.setOnClickListener(onClickShowTweetListener)
 
-            holder.retweetLayout!!.setOnClickListener(object : View.OnClickListener {
+            /* in tweet_layout */
+
+            holder.itemView.user_name.text = tweet.user.name
+            holderItemView.user_screen_name.text = atScreenName(tweet.user)
+            holderItemView.post_time.text = tweetTimeToDate(tweet.createdAt)
+
+            val profileImageView = holderItemView.user_profile_image as ImageView
+//            loadProfileImage(context, tweet.user, profileImageView, 80)
+
+            loadProfileImage(context, tweet.user, profileImageView, 1f)
+            //roundImage(context, tweet.user, profileImageView)
+
+            val str = tweetTimeToDate(tweet.createdAt)
+            Log.i(TAG, str)
+
+
+
+            holderItemView.tweet_text.text = tweet.text // how to link mask
+
+            // set w/ tweetview
+
+            //holder.reply.setOnClickListener(onClickShowTweetListener)
+
+            holder.itemView.retweet_layout.setOnClickListener(object : View.OnClickListener {
                 internal var client = TwitterCore.getInstance().apiClient
                 internal var statusesService = client.statusesService
 
@@ -292,7 +288,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
                 }
             })
 
-            holder.shareLayout.setOnClickListener {
+            holder.itemView.share_layout.setOnClickListener {
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
 
@@ -306,10 +302,10 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
                 mShareActionProvider.setShareIntent(shareIntent)
             }
 
-            ColorToggle.showHeartColor(tweet.favorited, holder.favoImage, context)
+            ColorToggle.showHeartColor(tweet.favorited, holder.itemView.favo_image, context)
 
-            holder.favoLayout.setOnClickListener {
-                ColorToggle.toggleHeartColor(tweetId, holder.favoImage, context)
+            holder.itemView.favo_layout.setOnClickListener {
+                ColorToggle.toggleHeartColor(tweetId, holder.itemView.favo_image, context)
                 Log.i(TAG, "toggle color called")
             }
         }
@@ -321,38 +317,43 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
         inner class HomeHolder(inflater: LayoutInflater, parent: ViewGroup)
             : ViewHolder(inflater.inflate(R.layout.item, parent, false)), View.OnClickListener {
 
+
             /**
              *  duplicate Resource id statements, but works!
              */
-            @BindView (R.id.my_tweet_layout)
-            var myTweetLayout: LinearLayout = itemView.findViewById(R.id.my_tweet_layout)
-            @BindView(R.id.favo)
-            var favoImage: ImageView = itemView.findViewById(R.id.favo)
-            @BindView(R.id.reply_layout)
-            var replyLayout: LinearLayout = itemView.findViewById(R.id.reply_layout)
-            @BindView(R.id.retweet_layout)
-            var retweetLayout: LinearLayout = itemView.findViewById(R.id.retweet_layout)
-            @BindView(R.id.favo_layout)
-            var favoLayout: LinearLayout = itemView.findViewById(R.id.favo_layout)
-            @BindView(R.id.share_layout)
-            var shareLayout: LinearLayout = itemView.findViewById(R.id.share_layout)
-            @BindView(R.id.notesNum)
-            var notesNum: TextView = itemView.findViewById(R.id.notesNum)
-            @BindView(R.id.notesText)
-            var notesTextView: TextView = itemView.findViewById(R.id.notesText)
+//            @BindView (R.id.my_tweet_layout)
+//            var myTweetLayout: LinearLayout = itemView.findViewById(R.id.my_tweet_layout)
+//            @BindView(R.id.favo_image)
+//            var favoImage: ImageView = itemView.findViewById(R.id.favo_image)
+//            @BindView(R.id.reply_layout)
+//            var replyLayout: LinearLayout = itemView.findViewById(R.id.reply_layout)
+//            @BindView(R.id.retweet_layout)
+//            var retweetLayout: LinearLayout = itemView.findViewById(R.id.retweet_layout)
+//            @BindView(R.id.favo_layout)
+//            var favoLayout: LinearLayout = itemView.findViewById(R.id.favo_layout)
+//            @BindView(R.id.share_layout)
+//            var shareLayout: LinearLayout = itemView.findViewById(R.id.share_layout)
+//            @BindView(R.id.notesNum)
+//            var notesNum: TextView = itemView.findViewById(R.id.notesNum)
+//            @BindView(R.id.notesText)
+//            var notesTextView: TextView = itemView.findViewById(R.id.notesText)
+
+            lateinit var mTweet: Tweet
 
             init {
-                ButterKnife.bind(this, itemView)
+                //ButterKnife.bind(this, itemView)
                 itemView.setOnClickListener(this)
 
+
+
             }
+
 
             override fun onClick(view: View) {
                 Toast.makeText(context, "my item clicked", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     /**
      * when pull refresh, perform this task to get new tweets
@@ -385,6 +386,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
         })
     }
 
+    // TODO throw ioe
     private fun HomeTimelineFragment.fetchList(): MutableList<Tweet> {
         val TAG_REQUEST_TWEETS = " hometimeline call"
         val client = TwitterCore.getInstance().apiClient
@@ -405,19 +407,8 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
                 if (result.data.isEmpty()) {
                     Toast.makeText(context, "no new tweets o_O", Toast.LENGTH_LONG).show()
                 } else {
-                    mTweetsUpdate = result.data.toMutableList()
-                    mTweets.addAll(0, mTweetsUpdate)
-
-//                    if (false) {
-//                        mTweets = result.data.toMutableList()
-//                    } else {
-//                        mTweetsUpdate = result.data.toMutableList()
-//                        mTweets!!.addAll(0, mTweetsUpdate) // insert from the beginning
-//                    }
-                    //UpdateUITask().execute()
-                    updateRecyclerUI()
-                    setMostRecentId()
-                    //setLeastRecentId()
+                    updateRecyclerUI(result.data)
+                    //setIdRange(result.data[0].id, null)
                 }
             }
 
@@ -432,13 +423,16 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
         return mTweets
     }
 
-    private fun setMostRecentId() {
-        mostRecentId = mTweetsUpdate[0].id
-    }
+//    private fun setMostRecentId(mostRecentId: Long) {
+//        mMostRecentId = mostRecentId
+//    }
+//
+//    private fun setLeastRecentId(leastRecentId:Long) {
+//        mLeastRecentId = leastRecentId
+//    }
 
-    private fun setLeastRecentId() {
-        //leastRecentId = mTweetsUpdate[.size - 1].id
-    }
+
+
 
     /**
      * Call this asynctask to get previous home timeline tweets
@@ -514,18 +508,7 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
 //        }
 //    }
 
-    fun updateRecyclerUI() {
 
-        if (mTweets.isEmpty()) return
-        if (mAdapter == null) {
-            mAdapter = HomeAdapter(mTweets)
-            mRecyclerViewHome.adapter = mAdapter
-        } else {
-            mAdapter!!.notifyItemRangeChanged(0, mTweets.size)
-        }
-
-        progress_bar?.visibility = View.GONE
-    }
 
 //    private fun setMostRecentId() {
 //        mostRecentId = mTweets!![0].id
@@ -548,5 +531,42 @@ class HomeTimelineFragment : Fragment(), RefreshTask.RefreshResponse {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    /**
+     * list -> to be added to the current list
+     */
+    fun updateRecyclerUI(list:List<Tweet>) {
+
+        mTweets.addAll(0, list)
+
+        /* To prevent the tweet list to be too long, remove the oldest ones after a certain index */
+        if (mTweets.size > 100) {
+            for (i in 100..mTweets.size) {
+                mTweets.removeAt(i)
+            }
+        }
+
+        if (mTweets.isEmpty()) return
+        if (mAdapter == null) {
+            mAdapter = HomeAdapter(mTweets)
+            mRecyclerViewHome.adapter = mAdapter
+        } else {
+            mAdapter!!.notifyItemRangeChanged(0, mTweets.size)
+        }
+
+        // set id range for timeline()
+        mMostRecentId = mTweets[0].id
+        mLeastRecentId = mTweets[mTweets.size -1].id
+
+        progress_bar?.visibility = View.GONE
+    }
+
+    /**
+     * set id range for homeTimeLine()
+     */
+    fun setIdRange(mostRecentId: Long?, leastRecentId: Long?){
+        if (mostRecentId != null) mMostRecentId = mostRecentId
+        if (leastRecentId!= null) mLeastRecentId = leastRecentId
     }
 }

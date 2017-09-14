@@ -2,8 +2,6 @@ package com.robyn.bitty.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -11,7 +9,6 @@ import android.support.design.widget.NavigationView
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -19,15 +16,8 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
+import android.widget.LinearLayout
 
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.bumptech.glide.request.target.ImageViewTarget
-import com.robyn.bitty.Bitty
-import com.robyn.bitty.BuildConfig
-import com.robyn.bitty.MakeSound
-import com.robyn.bitty.R
 import com.robyn.bitty.ui.timelines.HomeTimelineFragment
 import com.robyn.bitty.ui.timelines.SearchFragment
 import com.twitter.sdk.android.core.Callback
@@ -40,19 +30,18 @@ import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 import java.net.MalformedURLException
 import java.net.URL
 
-import com.bumptech.glide.request.target.Target
-import com.twitter.sdk.android.core.models.Tweet
+import com.robyn.bitty.*
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_drawer.*
-import kotlinx.android.synthetic.main.activity_reply.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import java.util.concurrent.Callable
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
 
     private var userImageUrl: URL? = null
     private var userImageUrlString: String? = null
@@ -248,38 +237,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val string = result.response.toString()
                     Log.i(TAG, string)
 
+
+                    val params = LinearLayout.LayoutParams(30, 30)
+
                     val profileImage = toolbar_main.getChildAt(1) as ImageView
 
+                    val profileImageDrawer = drawer_layout.findViewById<ImageView>(R.id.profile_img_drawer)
 
                     val drawerHeader = drawer_nav_view!!.getChildAt(0)
 
     //                        profile_img_drawer = drawerHeader.findViewById(R.id.profile_img_drawer)
     //                        screen_name_drawer = drawerHeader.findViewById(R.id.screen_name_drawer)
 
-                    val userName = user.name
-                    val atScreenName = "@${user.screenName}"
+//                    val userName = user.name
+//                    val atScreenName = atScreenName(user)
 
-                    val userNameNAtScreenName = "${user.name}\n@${user.screenName}"
-
+                    val userNameNAtScreenName = "${user.name}\n${com.robyn.bitty.atScreenName(user)}"
                     screen_name_drawer.text = userNameNAtScreenName
 
-                    Glide.with(applicationContext).load(userImageUrl)
-                            .asBitmap().into<ImageViewTarget<Bitmap>>(object : BitmapImageViewTarget(profileImage) {
-                        override fun setResource(resource: Bitmap) {
-                            val navIconBitmap = Bitmap.createScaledBitmap(resource, 90, 90, true)
-
-                            val roundNavIconDrawable = RoundedBitmapDrawableFactory.create(applicationContext.resources, navIconBitmap)
-                            roundNavIconDrawable.isCircular = true
-
-                            val headerProfileBitmap = Bitmap.createScaledBitmap(resource, 200, 200, true)
-
-                            val roundHeaderDrawable = RoundedBitmapDrawableFactory.create(applicationContext.resources, headerProfileBitmap)
-                            roundHeaderDrawable.isCircular = true
-
-                            toolbar_main.navigationIcon = roundNavIconDrawable
-                            profile_img_drawer!!.setImageDrawable(roundHeaderDrawable)
-                        }
-                    })
+                    loadProfileImage(applicationContext, user, profileImage, 0.5f)
+                    loadProfileImage(applicationContext, user, profileImageDrawer)
 
                     Log.i(TAG, "userImageUrl = " + userImageUrl!!)
                 } catch (e: MalformedURLException) {
@@ -301,6 +278,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
         return isVertified
     }
+
+    //private fun loadProfileImage(profileImage: ImageView) {
+//        Glide.with(applicationContext).loadProfileImage(userImageUrl)
+//                .asBitmap().into<ImageViewTarget<Bitmap>>(object : BitmapImageViewTarget(profileImage) {
+//            override fun setResource(resource: Bitmap) {
+//                val navIconBitmap = Bitmap.createScaledBitmap(resource, 90, 90, true)
+//
+//                val roundNavIconDrawable = RoundedBitmapDrawableFactory.create(applicationContext.resources, navIconBitmap)
+//                roundNavIconDrawable.isCircular = true
+//
+//                val headerProfileBitmap = Bitmap.createScaledBitmap(resource, 160, 200, true)
+//
+//                val roundHeaderDrawable = RoundedBitmapDrawableFactory.create(applicationContext.resources, headerProfileBitmap)
+//                roundHeaderDrawable.isCircular = true
+//
+//                toolbar_main.navigationIcon = roundNavIconDrawable
+//                profile_img_drawer!!.setImageDrawable(roundHeaderDrawable)
+//            }
+//        })
+    //}
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName

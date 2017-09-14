@@ -14,7 +14,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.robyn.bitty.R;
-import com.robyn.bitty.ui.timelines.TweetActionsFragment;
+
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -66,13 +66,15 @@ public class ShowTweetActivity extends AppCompatActivity {
             }
         });
 
-        mScrollView = findViewById(R.id.tweet_layout);
+        //mScrollView = findViewById(R.id.tweet_layout_mock);
 
 
 // TODO: 7/31/2017 custom tweet view
         // todo inflate a fg showing the aciton buttons w/o focus, by clicking the tweetview
 
     }
+
+    // todo: replace this request w/ args
 
     private class ShowTweetTask extends AsyncTask<Void, Void, Void> {
 
@@ -109,16 +111,16 @@ public class ShowTweetActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentById(R.id.actions_fragment_container);
-            if (fragment == null) {
-                fragment = TweetActionsFragment.newInstance(
-                        mTweetId, mIsFavoed, mScreenName);
-                fragmentManager
-                        .beginTransaction()
-                        .add(R.id.actions_fragment_container, fragment)
-                        .commit();
-            }
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            Fragment fragment = fragmentManager.findFragmentById(R.id.actions_fragment_container);
+//            if (fragment == null) {
+//                fragment = TweetActionsFragment.Companion.newInstance(
+//                        mTweetId, mIsFavoed, mScreenName);
+//                fragmentManager
+//                        .beginTransaction()
+//                        .add(R.id.actions_fragment_container, fragment)
+//                        .commit();
+//            }
             cancel(false);
         }
     }

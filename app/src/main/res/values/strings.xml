@@ -21,4 +21,5 @@
     <string name="favoed">favoed</string>
     <string name="notes_space">\ Notes</string>
     <string name="no_new_tweets">no new tweets o_O</string>
+    <string name="user_s_profile_image">User\'s profile image</string>
 </resources>

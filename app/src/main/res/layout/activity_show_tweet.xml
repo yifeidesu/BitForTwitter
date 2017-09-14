@@ -28,21 +28,28 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
-        android:id="@+id/tweet_layout"
+        android:id="@+id/show_tweet_layout"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/actions_fragment_container"
-        android:layout_alignParentBottom="true"
-        android:divider="@drawable/my_divider"
-        android:showDividers="beginning|end"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/actions_fragment_container"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:divider="@drawable/my_divider"-->
+        <!--android:showDividers="beginning|end"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+        <!---->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
+
+    <include
+        layout="@layout/fragment_tweet_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>
