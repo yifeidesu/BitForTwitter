@@ -25,6 +25,8 @@ CONSUMER_SECRET="your_consumer_secret_key_here"
 ```
 
 ## Screenshots
+<img src="https://user-images.githubusercontent.com/23082500/30894305-0a729708-a311-11e7-93e7-3d1ae90ecb10.jpg">
+
 <img src="https://user-images.githubusercontent.com/23082500/28901343-85a77b54-77c5-11e7-8d15-10071f6f6461.jpg">
 
 ## [License](https://github.com/yifeidesu/Bitty/blob/master/LICENSE.txt)
