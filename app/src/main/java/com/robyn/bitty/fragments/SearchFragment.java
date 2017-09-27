@@ -1,4 +1,4 @@
-package com.robyn.bitty.ui.timelines;
+package com.robyn.bitty.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

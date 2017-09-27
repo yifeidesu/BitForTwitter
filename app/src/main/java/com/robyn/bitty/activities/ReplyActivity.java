@@ -1,4 +1,4 @@
-package com.robyn.bitty.ui;
+package com.robyn.bitty.activities;
 
 import android.content.Context;
 import android.content.Intent;

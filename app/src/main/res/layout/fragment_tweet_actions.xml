@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
-              android:background="@color/white"
-              android:padding="8dp"
+              android:gravity="center_vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
@@ -11,7 +10,6 @@
         style="@style/notesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
     <TextView
     android:id="@+id/notesText"
     android:visibility="invisible"
@@ -30,7 +28,7 @@
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/reply"
-            android:layout_gravity="center|right"
+            android:layout_gravity="center|end"
             android:src="@drawable/ic_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

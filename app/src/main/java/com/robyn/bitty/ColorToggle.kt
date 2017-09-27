@@ -44,9 +44,9 @@ object ColorToggle {
      * @param favoImage
      * @param context
      */
-    fun toggleHeartColor(tweetId: Long,
-                         favoImage: ImageView,
-                         context: Context) {
+    fun toggleFavo(tweetId: Long,
+                   favoImage: ImageView,
+                   context: Context) {
 
         val client = TwitterCore.getInstance().apiClient
         val favoriteService = client.favoriteService

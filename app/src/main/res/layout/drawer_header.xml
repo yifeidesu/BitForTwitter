@@ -3,28 +3,87 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:background="@color/white"
     android:gravity="bottom|center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="56dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/profile_img_drawer"
-        android:contentDescription="@string/user_profile_photo"
-        android:layout_width="52dp"
-        android:layout_height="52dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/banner_image"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:contentDescription="@string/user_s_banner_image"
+            android:scaleType="centerCrop"/>
 
-    <TextView
-        android:id="@+id/screen_name_drawer"
-        android:textSize="16sp"
-        android:gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
+        <ImageView
+            android:id="@+id/profile_img_drawer"
+            android:contentDescription="@string/user_profile_photo"
+            android:layout_below="@id/banner_image"
+            android:layout_marginTop="-30dp"
+            android:layout_marginStart="16dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/user_name_drawer"
+            style="@style/tweet.userNameText"
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/screen_name_drawer"
+            style="@style/tweet.screenNameText"
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@string/following"
+                style="@style/tweet.followingText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/follows_count"
+                style="@style/tweet.followingCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/followed"
+                style="@style/tweet.followingText"
+                android:paddingStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/follower_count"
+                style="@style/tweet.followingCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

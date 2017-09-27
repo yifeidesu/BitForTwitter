@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/tweet_layout_solo"
               android:orientation="vertical"
+              android:padding="16dp"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
@@ -10,38 +12,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-            android:id="@+id/user_profile_image"
+            android:id="@+id/user_profile_image_solo"
             android:contentDescription="@string/user_s_profile_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"/>
+            android:layout_width="65dp"
+            android:layout_height="65dp"/>
         <LinearLayout
             android:orientation="vertical"
-            android:padding="8dp"
+            android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/user_name_solo"
+                style="@style/tweet.userNameRetweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:id="@+id/user_name"
+                    android:id="@+id/user_screen_name_solo"
+                    style="@style/tweet.screenNameTextSolo"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_light"/>
+
                 <TextView
-                    android:id="@+id/user_screen_name"
+                    android:id="@+id/create_at_solo"
+                    style="@style/tweet.screenNameTextSolo"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_light"/>
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/post_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
         </LinearLayout>
+    </LinearLayout>
 
-        </LinearLayout>
     <TextView
-        android:id="@+id/tweet_text"
+        android:id="@+id/tweet_text_solo"
+        style="@style/tweet.entitiesTextSolo"
+        android:autoLink="web"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:visibility="gone"
+              android:orientation="horizontal"
+              android:paddingTop="8dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/gray_bar"
+        android:background="@color/blueGrey100"
+        android:layout_width="4dp"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/user_name_quote"
+                style="@style/tweet.userNameRetweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/user_screen_name_quote"
+                style="@style/tweet.screenNameRetweet"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/create_at_quote"
+                style="@style/tweet.screenNameRetweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tweet_text_quote"
+            style="@style/tweet.entitiesTextRetweet"
+            android:autoLink="web"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>

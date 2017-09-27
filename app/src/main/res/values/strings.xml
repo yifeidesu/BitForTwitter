@@ -14,12 +14,18 @@
     <string name="in_reply_to">In reply to \ </string>
     <string name="submit_reply">Submit reply</string>
 
-    <string name="login">Login</string>
-    <string name="help_me_improve">Help me improve</string>
+    /* drawer menu */
+    <string name="login">\  Login</string>
+    <string name="help_me_improve">\  Help me improve</string>
     <string name="user_profile_photo">User profile photo</string>
 
     <string name="favoed">favoed</string>
     <string name="notes_space">\ Notes</string>
     <string name="no_new_tweets">no new tweets o_O</string>
     <string name="user_s_profile_image">User\'s profile image</string>
+    <string name="user_s_banner_image">User\'s banner image</string>
+
+    <string name="following">Following\ </string>
+    <string name="followed">\ Followed\ </string>
+    <string name="tweet_entity_images">tweet entity images</string>
 </resources>

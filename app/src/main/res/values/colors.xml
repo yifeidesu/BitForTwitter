@@ -4,9 +4,16 @@
     <color name="colorPrimaryDark">#263238</color>
     <color name="colorAccent">#FF5BAAF4</color>
 
+    <color name="black">#000000</color>
+
     <color name="black_overlay">#66000000</color>
 
+    <color name="gray40">#BDBDBD</color>
     <color name="gray50">#ECEFF1</color>
+    <color name="lightGray">#F7F7F7</color>
+
+    <color name="blueGrey100">#CFD8DC</color>
+    <color name="blueGrey50">#f9fcff</color>
 
     <color name="white">#FFFFFF</color>
 

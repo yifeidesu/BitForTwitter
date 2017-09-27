@@ -1,4 +1,4 @@
-package com.robyn.bitty.ui
+package com.robyn.bitty.activities
 
 import android.content.Context
 import android.content.Intent
@@ -16,10 +16,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 
-import com.robyn.bitty.ui.timelines.HomeTimelineFragment
-import com.robyn.bitty.ui.timelines.SearchFragment
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterCore
@@ -31,42 +28,31 @@ import java.net.MalformedURLException
 import java.net.URL
 
 import com.robyn.bitty.*
+import com.robyn.bitty.fragments.HomeTimelineFragment
+import com.robyn.bitty.fragments.SearchFragment
+
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main_drawer.*
+import kotlinx.android.synthetic.main.drawer_activity_main.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import java.util.concurrent.Callable
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
 
     private var userImageUrl: URL? = null
     private var userImageUrlString: String? = null
 
     private var mFragmentManager: FragmentManager? = null
 
-    //private var profile_img_drawer: ImageView? = null
-    //private var screen_name_drawer: TextView? = null
-
-//    @BindView(R.id.toolbar)
-//    internal var toolbar: Toolbar? = null
-//    @BindView(R.id.networking_wrong_msg)
-//    internal var networking_wrong_msg: TextView? = null
-//    @BindView(R.id.drawer_layout)
-//    internal var drawer_layout: DrawerLayout? = null
-//    @BindView(R.id.drawer_nav_view)
-//    internal var drawer_nav_view: NavigationView? = null
-    //    @BindView(R.id.bottom_nav_view)
-    //    BottomNavigationView bottom_nav_view;
-
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
                 toolbar_main!!.getChildAt(0).visibility = View.VISIBLE
                 replaceFragment(HomeTimelineFragment.newInstance())
+
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_compose -> {
@@ -90,16 +76,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_drawer)
+        setContentView(R.layout.drawer_activity_main)
 
-        //CheckAuthTask().execute()
-
+        //to CheckAuth
         isVertified()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()) // receive on main thread
                 .subscribe(
                         {result ->
-                            Log.i(TAG, "RESPONSE SIZE = $result")
+                            Log.i(TAG, "vertify result = ${result}")
                             // fun updateProfileImg()
                             },
                         {err -> Log.e(TAG, err.message)},
@@ -107,12 +92,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             // fun updateProfileImg()
                         })
 
-        //ButterKnife.bind(this);
-
         // top bar
         setSupportActionBar(toolbar_main)
         if (supportActionBar != null) {
             supportActionBar!!.title = "Home"
+            
         }
 
         // bottom bar
@@ -139,11 +123,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_toggle.syncState()
 
         drawer_nav_view!!.setNavigationItemSelectedListener(this)
-        val drawerHeader = drawer_nav_view!!.getChildAt(0)
-        //profile_img_drawer = drawerHeader.findViewById<View>(R.id.profile_img_drawer) as ImageView
-
     }
-
 
     fun isVertified(): Observable<Boolean> {
         return Observable.defer(Callable<ObservableSource<Boolean>> {
@@ -205,19 +185,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-//    private inner class CheckAuthTask : AsyncTask<Void, Void, User>() {
-//
-//        override fun doInBackground(vararg voids: Void): User? {
-//
-//            return checkAuth()
-//        }
-//
-//        override fun onPostExecute(user: User) {
-//            super.onPostExecute(user)
-//            cancel(false)
-//        }
-//    }
-
     private fun checkAuth():Boolean {
         var isVertified = false
         val client = TwitterCore.getInstance().apiClient
@@ -238,27 +205,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Log.i(TAG, string)
 
 
-                    val params = LinearLayout.LayoutParams(30, 30)
-
                     val profileImage = toolbar_main.getChildAt(1) as ImageView
 
                     val profileImageDrawer = drawer_layout.findViewById<ImageView>(R.id.profile_img_drawer)
 
-                    val drawerHeader = drawer_nav_view!!.getChildAt(0)
+                    user_name_drawer.text = user.name
+                    screen_name_drawer.text = atScreenName(user)
+                    follows_count.text = user.friendsCount.toString()// ???
+                    follower_count.text = user.followersCount.toString()
 
-    //                        profile_img_drawer = drawerHeader.findViewById(R.id.profile_img_drawer)
-    //                        screen_name_drawer = drawerHeader.findViewById(R.id.screen_name_drawer)
+                    // follower_count.text = user.followersCount.toString()
 
-//                    val userName = user.name
-//                    val atScreenName = atScreenName(user)
+                    // tool bar nav icon
+                    loadProfileImage(applicationContext, user, profileImage, 0.6f)
 
-                    val userNameNAtScreenName = "${user.name}\n${com.robyn.bitty.atScreenName(user)}"
-                    screen_name_drawer.text = userNameNAtScreenName
+                    // drawer profile image
+                    loadOriginalProfileImage(applicationContext, originalProfileImageUrl(user.profileImageUrl), profileImageDrawer, 0)
 
-                    loadProfileImage(applicationContext, user, profileImage, 0.5f)
-                    loadProfileImage(applicationContext, user, profileImageDrawer)
+                    // drawer banner image
+                    loadBannerImage(applicationContext, user, banner_image)
 
-                    Log.i(TAG, "userImageUrl = " + userImageUrl!!)
                 } catch (e: MalformedURLException) {
                     e.printStackTrace()
                 }
@@ -278,26 +244,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
         return isVertified
     }
-
-    //private fun loadProfileImage(profileImage: ImageView) {
-//        Glide.with(applicationContext).loadProfileImage(userImageUrl)
-//                .asBitmap().into<ImageViewTarget<Bitmap>>(object : BitmapImageViewTarget(profileImage) {
-//            override fun setResource(resource: Bitmap) {
-//                val navIconBitmap = Bitmap.createScaledBitmap(resource, 90, 90, true)
-//
-//                val roundNavIconDrawable = RoundedBitmapDrawableFactory.create(applicationContext.resources, navIconBitmap)
-//                roundNavIconDrawable.isCircular = true
-//
-//                val headerProfileBitmap = Bitmap.createScaledBitmap(resource, 160, 200, true)
-//
-//                val roundHeaderDrawable = RoundedBitmapDrawableFactory.create(applicationContext.resources, headerProfileBitmap)
-//                roundHeaderDrawable.isCircular = true
-//
-//                toolbar_main.navigationIcon = roundNavIconDrawable
-//                profile_img_drawer!!.setImageDrawable(roundHeaderDrawable)
-//            }
-//        })
-    //}
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName

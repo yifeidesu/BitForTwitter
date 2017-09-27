@@ -10,7 +10,7 @@
     android:background="@color/white"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.robyn.bitty.ui.ShowTweetActivity">
+    tools:context="com.robyn.bitty.activities.TweetSoloActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"
@@ -28,27 +28,21 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
-        android:id="@+id/show_tweet_layout"
-        android:layout_alignParentBottom="true"
+        android:id="@+id/tweet_layout_scrollview"
         android:layout_below="@id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/tweet_layout_solo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     </ScrollView>
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/actions_fragment_container"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:divider="@drawable/my_divider"-->
-        <!--android:showDividers="beginning|end"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-        <!---->
-
-    <!--</LinearLayout>-->
 
     <include
         layout="@layout/fragment_tweet_actions"
+        android:layout_below="@id/tweet_layout_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
