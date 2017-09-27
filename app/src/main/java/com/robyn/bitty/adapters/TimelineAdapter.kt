@@ -49,7 +49,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
     val mTweets:MutableList<Tweet> = ArrayList<Tweet>()
 
-
     // private val mTweetToAdapter: MutableList<Tweet> = mTweets
     // private val mOnClickListener: View.OnClickListener() {}
 
