@@ -8,7 +8,7 @@ import android.media.SoundPool
 /**
  * Created by yifei on 7/30/2017.
  *
- * to notify when build finishes. Remove before product release
+ * To notify when fetching finishes
  */
 
 class MakeSound {

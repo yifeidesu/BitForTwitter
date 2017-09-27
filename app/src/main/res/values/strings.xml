@@ -26,6 +26,6 @@
     <string name="user_s_banner_image">User\'s banner image</string>
 
     <string name="following">Following\ </string>
-    <string name="followed">\ Followed\ </string>
+    <string name="follower">\ Follower\ </string>
     <string name="tweet_entity_images">tweet entity images</string>
 </resources>
