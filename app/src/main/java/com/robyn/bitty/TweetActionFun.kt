@@ -27,7 +27,7 @@ fun favoAction(context: Context, tweet: Tweet, favoImageView: ImageView) {
  *  tweetId + isFavo
  */
 fun favoAction(context: Context, tweetId: Long,
-               isFavo:Boolean, favoImageView: ImageView) {
+               isFavo: Boolean, favoImageView: ImageView) {
     ColorToggle.showHeartColor(isFavo, favoImageView, context)
 
     favoImageView.setOnClickListener {

@@ -47,7 +47,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
     var composite: CompositeDisposable = CompositeDisposable()
 
-    val mTweets:MutableList<Tweet> = ArrayList<Tweet>()
+    val mTweets: MutableList<Tweet> = ArrayList<Tweet>()
 
     // private val mTweetToAdapter: MutableList<Tweet> = mTweets
     // private val mOnClickListener: View.OnClickListener() {}
@@ -88,7 +88,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                    holderItemView.tweet_text.text = tweet.text // how to link mask
 //                }
 
-            with (holderItemView) {
+            with(holderItemView) {
                 loadProfileImage(context, biggerProfileImageUrl(tweet.user.profileImageUrl),
                         user_profile_image, 0)
                 user_name.text = tweet.user.name
@@ -156,7 +156,8 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
                     tweet.user.screenName,
                     tweet.user.profileImageUrl,
                     tweet.text,
-                    tweet.createdAt)) }
+                    tweet.createdAt))
+        }
 
         holderItemView.tweet_layout_in_list.setOnClickListener(onClickListenerItem)
         holderItemView.my_item_layout.reply_layout.setOnClickListener(onClickListenerItem)
@@ -245,7 +246,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
         // bind data
 
 
-
         fun displayNotes(tweet: Tweet) {
             val notes = tweet.favoriteCount + tweet.retweetCount
             if (notes != 0) {
@@ -275,12 +275,12 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
     /**
      * @param updateTweets the list to be added to the current list
      */
-    fun updateRecyclerUI(updateTweets:List<Tweet>, homeTimeline: RecyclerView) {
+    fun updateRecyclerUI(updateTweets: List<Tweet>, homeTimeline: RecyclerView) {
         val TAG = "updateRecyclerUI"
         Log.i(TAG, "updateTweets.size = ${updateTweets.size}")
 
         if (updateTweets.isEmpty()) return
-        mTweets.addAll(0,updateTweets)
+        mTweets.addAll(0, updateTweets)
 
         if (mAdapter == null) {
             //mTweet = updateTweets.toMutableList()
@@ -295,7 +295,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
     }
 
 
-        /**
+    /**
      *
      *
      *  current maxId = new list's sinceId
@@ -331,8 +331,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                        })
 //        composite.add(disposable)
 //    }
-
-
 
 
 }

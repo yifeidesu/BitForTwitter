@@ -83,11 +83,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()) // receive on main thread
                 .subscribe(
-                        {result ->
+                        { result ->
                             Log.i(TAG, "vertify result = ${result}")
                             // fun updateProfileImg()
-                            },
-                        {err -> Log.e(TAG, err.message)},
+                        },
+                        { err -> Log.e(TAG, err.message) },
                         {
                             // fun updateProfileImg()
                         })
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar_main)
         if (supportActionBar != null) {
             supportActionBar!!.title = "Home"
-            
+
         }
 
         // bottom bar
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun checkAuth():Boolean {
+    private fun checkAuth(): Boolean {
         var isVertified = false
         val client = TwitterCore.getInstance().apiClient
         val accountService = client.accountService
