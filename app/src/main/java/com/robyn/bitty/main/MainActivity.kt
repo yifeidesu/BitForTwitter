@@ -22,7 +22,6 @@ import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.models.User
-import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 
 import java.net.MalformedURLException
 import java.net.URL
@@ -44,7 +43,7 @@ import java.util.concurrent.Callable
 
 class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.OnNavigationItemSelectedListener {
 
-    override var presenter: TimelineContract.Presenter = TimelinePresenter(RemoteDataSource)
+    override var presenter: TimelineContract.Presenter = TimelinePresenter(this, RemoteDataSource)
 
     private var userImageUrl: URL? = null
     private var userImageUrlString: String? = null
@@ -60,7 +59,9 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_compose -> {
-                composeTweet()
+
+                presenter.composeTweet(this)
+
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_search -> {
@@ -82,10 +83,11 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.drawer_activity_main)
 
+        this.presenter = presenter
+
         //to CheckAuth
 
-
-        isVertified()
+        isVerified() /* returns an observable */
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()) // receive on main thread
                 .subscribe(
@@ -107,7 +109,7 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
         // bottom bar
         bottom_nav_view.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        // fragment in middle
+        // fragment in middle of screen
         networking_wrong_msg!!.visibility = View.GONE
 
         mFragmentManager = supportFragmentManager
@@ -129,25 +131,36 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
         drawer_nav_view!!.setNavigationItemSelectedListener(this)
     }
 
-    private fun isVertified(): Observable<Boolean> {
-        return Observable.defer(Callable<ObservableSource<Boolean>> {
+    /**
+     * This method returns to an observable that can notify if the user is verified by emitting a bool
+     * defer() returns an observable which will start emitting data when it gets subscribed.
+     * in this case, the emission is a bool, indicates if the user is verified.
+     *
+     */
+    private fun isVerified(): Observable<Boolean> {
+
+        val callable = Callable<ObservableSource<Boolean>> {
             try {
                 return@Callable Observable.just(checkAuth())
             } catch (e: Exception) {
-                Log.e(TAG, e.message)
+                myLog(this.toString(), e.toString())
                 return@Callable null
             }
-        })
+        }
+
+        return Observable.defer(callable)
     }
 
-    fun composeTweet() {
-        val session = TwitterCore.getInstance().sessionManager
-                .activeSession
-        val intent = ComposerActivity.Builder(this@MainActivity)
-                .session(session)
-                .createIntent()
-        startActivity(intent)
-    }
+//    fun composeTweet() {
+//        val session = TwitterCore.getInstance().sessionManager
+//                .activeSession
+//        val intent = ComposerActivity.Builder(this@MainActivity)
+//                .session(session)
+//                .createIntent()
+//        startActivity(intent)
+//    }
+
+
 
     // for drawer
     override fun onBackPressed() {
@@ -189,44 +202,28 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
         return true
     }
 
+    /**
+     * Check user verification by make a verifyCredentials() call
+     *
+     * If verification success, also custom ui with returned User object
+     */
     private fun checkAuth(): Boolean {
-        var isVertified = false
-        val client = TwitterCore.getInstance().apiClient
-        val accountService = client.accountService
+        var vertified = false
 
-        val call = accountService.verifyCredentials(false, true, false)
+        val call = TwitterCore.getInstance()
+                .apiClient
+                .accountService
+                .verifyCredentials(false, true, false)
+
 
         call.enqueue(object : Callback<User>() {
+
             override fun success(result: Result<User>) {
-                isVertified = true
+                vertified = true
                 try {
                     val user = result.data
 
-                    userImageUrl = URL(user.profileImageUrlHttps)
-                    userImageUrlString = userImageUrl!!.toString()
-
-                    val string = result.response.toString()
-                    Log.i(TAG, string)
-
-                    val profileImage = toolbar_main.getChildAt(1) as ImageView
-
-                    val profileImageDrawer = drawer_layout.findViewById<ImageView>(R.id.profile_img_drawer)
-
-                    user_name_drawer.text = user.name
-                    screen_name_drawer.text = atScreenName(user)
-                    follows_count.text = user.friendsCount.toString()// ???
-                    follower_count.text = user.followersCount.toString()
-
-                    // follower_count.text = user.followersCount.toString()
-
-                    // tool bar nav icon
-                    loadProfileImage(applicationContext, user, profileImage, 0.6f)
-
-                    // drawer profile image
-                    loadOriginalProfileImage(applicationContext, originalProfileImageUrl(user.profileImageUrl), profileImageDrawer, 0)
-
-                    // drawer banner image
-                    loadBannerImage(applicationContext, user, banner_image)
+                    customWithUserContent(user)
                 } catch (e: MalformedURLException) {
                     e.printStackTrace()
                 }
@@ -243,7 +240,31 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
                 Log.e(TAG, exception.message)
             }
         })
-        return isVertified
+        return vertified
+    }
+
+    /**
+     * Custom the drawer and the action bar w/ the [user] object
+     */
+    private fun customWithUserContent(user: User) {
+        userImageUrl = URL(user.profileImageUrlHttps)
+        userImageUrlString = userImageUrl!!.toString()
+
+        val profileImage = toolbar_main.getChildAt(1) as ImageView
+        val profileImageDrawer = drawer_layout.findViewById<ImageView>(R.id.profile_img_drawer)
+
+        // setup the drawer's user content
+        user_name_drawer.text = user.name
+        screen_name_drawer.text = atScreenName(user)
+        follows_count.text = user.friendsCount.toString()
+        follower_count.text = user.followersCount.toString()
+        loadOriginalProfileImage(applicationContext,
+                originalProfileImageUrl(user.profileImageUrl),
+                profileImageDrawer, 0)
+        loadBannerImage(applicationContext, user, banner_image)
+
+        // tool bar nav icon
+        loadProfileImage(applicationContext, user, profileImage, 0.6f)
     }
 
     companion object {

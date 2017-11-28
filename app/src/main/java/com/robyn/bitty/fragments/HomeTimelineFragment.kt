@@ -14,7 +14,7 @@ import android.widget.Button
 import android.support.v7.widget.RecyclerView.*
 import com.robyn.bitty.*
 import com.robyn.bitty.adapters.TimelineAdapter
-import com.robyn.bitty.fetch
+import com.robyn.bitty.Fetch
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_hometimeline.*
 import kotlinx.android.synthetic.main.fragment_hometimeline.view.*
@@ -37,13 +37,12 @@ class HomeTimelineFragment : Fragment() {
 //    private var mMaxId: Long? = null
 //    private var mMinId: Long? = null
 
-    private var
-            mButtonLoadMore: Button? = null
+    private var mButtonLoadMore: Button? = null
 
 
 //    var disposable: Disposable =
 //    lateinit var disposable2: Disposable
-    var composite: CompositeDisposable = CompositeDisposable()
+    var disposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +51,15 @@ class HomeTimelineFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!composite.isDisposed)
-            composite.dispose()
+        if (!disposable.isDisposed)
+            disposable.dispose()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_hometimeline, container, false)
 
-        fetch.fetchTweets(context, null, true, view.home_timeline, view.progress_bar)
+        Fetch.fetchTweets(context, null, true, view.home_timeline, view.progress_bar)
 
         // setup recyclerView
         val mHomeTimeline = view.home_timeline
@@ -80,8 +79,8 @@ class HomeTimelineFragment : Fragment() {
         })
 
         view.swipe_refresh_layout.setOnRefreshListener {
-            // fetch new tweets, current max = this.min
-            fetch.fetchTweets(context, null, true, view.home_timeline, view.progress_bar)
+            // Fetch new tweets, current max = this.min
+            Fetch.fetchTweets(context, null, true, view.home_timeline, view.progress_bar)
             Log.i(TAG, "swipe_refresh_layout listener" )
             swipe_refresh_layout.isRefreshing = false
         }

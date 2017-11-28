@@ -329,7 +329,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                                }
 //                            }
 //                        })
-//        composite.add(disposable)
+//        disposable.add(disposable)
 //    }
 
 
