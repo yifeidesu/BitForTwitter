@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestOptions
@@ -24,24 +23,33 @@ import java.util.concurrent.Callable
 
 
 /**
+ * todo move to remote data source class
+ *
  * functions for timelines
+ *
  *
  * Created by yifei on 9/14/2017.
  */
 val TAG = "TweetFun"
 
-//    // max / min id of current tweet list
 private var mMaxId: Long? = null
 private var mMinId: Long? = null
 
-var composite: CompositeDisposable = CompositeDisposable()
+var disposable: CompositeDisposable = CompositeDisposable()
 
-object fetch {
+object Fetch {
 
     var mTweet:MutableList<Tweet> = ArrayList<Tweet>()
-    //var mAdapter: TimelineAdapter? = null
     /**
      * get the observable to be used for Disposable
+     *
+     * returns an observable, that is a holder of a list of tweets
+     *
+     *
+     *
+     *
+     *
+     *
      */
     fun fetchNewObservable(sinceId: Long? = null, fetchNew: Boolean = true): Observable<List<Tweet>> {
 
@@ -99,25 +107,27 @@ object fetch {
                             }
 
                         })
-        composite.add(disposable)
+        com.robyn.bitty.disposable.add(disposable)
     }
 
     /**
-     * API calls
+     * Make an http call, hometimeline(),  with twitter sdk status service,
+     *
+     * returns a list
+     *
      *
      * Fetch a tweet list to update.
      * To be used w/ twitter api timeline methods, e.g,
-     * fetch new tweets; pull previous tweets; search; trends.
+     * Fetch new tweets; pull previous tweets; search; trends.
      */
     fun fetchList(endId:Long? = null, fetchNew: Boolean = true ):List<Tweet>? {
-        val TAG = "timeline.fetchList"
         val client = TwitterCore.getInstance().apiClient
         val statusesService = client.statusesService
 
         val call = if (fetchNew) {
-            statusesService.homeTimeline(
+            statusesService.homeTimeline( // http get method
                     null,
-                    endId, // to fetch new, current maxId = this.minId
+                    endId, // to Fetch new, current maxId = this.minId
                     null,
                     null,
                     false,
