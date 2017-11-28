@@ -1,4 +1,4 @@
-package com.robyn.bitty.activities
+package com.robyn.bitty.main
 
 import android.content.Context
 import android.content.Intent
@@ -28,6 +28,8 @@ import java.net.MalformedURLException
 import java.net.URL
 
 import com.robyn.bitty.*
+import com.robyn.bitty.activities.LoginActivity
+import com.robyn.bitty.data.RemoteDataSource
 import com.robyn.bitty.fragments.HomeTimelineFragment
 import com.robyn.bitty.fragments.SearchFragment
 
@@ -40,7 +42,9 @@ import kotlinx.android.synthetic.main.drawer_activity_main.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import java.util.concurrent.Callable
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.OnNavigationItemSelectedListener {
+
+    override var presenter: TimelineContract.Presenter = TimelinePresenter(RemoteDataSource)
 
     private var userImageUrl: URL? = null
     private var userImageUrlString: String? = null
@@ -79,6 +83,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.drawer_activity_main)
 
         //to CheckAuth
+
+
         isVertified()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()) // receive on main thread
@@ -96,7 +102,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar_main)
         if (supportActionBar != null) {
             supportActionBar!!.title = "Home"
-
         }
 
         // bottom bar
@@ -115,7 +120,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .commit()
         }
 
-
         // the drawer
         val drawer_toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar_main, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -125,7 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_nav_view!!.setNavigationItemSelectedListener(this)
     }
 
-    fun isVertified(): Observable<Boolean> {
+    private fun isVertified(): Observable<Boolean> {
         return Observable.defer(Callable<ObservableSource<Boolean>> {
             try {
                 return@Callable Observable.just(checkAuth())
@@ -204,7 +208,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val string = result.response.toString()
                     Log.i(TAG, string)
 
-
                     val profileImage = toolbar_main.getChildAt(1) as ImageView
 
                     val profileImageDrawer = drawer_layout.findViewById<ImageView>(R.id.profile_img_drawer)
@@ -224,7 +227,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     // drawer banner image
                     loadBannerImage(applicationContext, user, banner_image)
-
                 } catch (e: MalformedURLException) {
                     e.printStackTrace()
                 }
@@ -233,7 +235,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 MakeSound().playSound(applicationContext)
                 networking_wrong_msg!!.visibility = View.GONE
-
             }
 
             override fun failure(exception: TwitterException) {
@@ -247,7 +248,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
-
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)
         }
