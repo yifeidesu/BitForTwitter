@@ -12,7 +12,7 @@ import io.reactivex.Observable
 interface TimelineContract {
     interface View : BaseView<Presenter>
     interface Presenter : BasePresenter {
-        fun composeTweet(context: Context)
+        //fun composeTweet(context: Context)
         fun isVerified(): Observable<Boolean>
         fun checkAuth():Boolean
     }
