@@ -1,9 +1,10 @@
-package com.robyn.bitty
+package com.robyn.bitty.utils
 
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.SoundPool
+import com.robyn.bitty.R
 
 /**
  * Created by yifei on 7/30/2017.

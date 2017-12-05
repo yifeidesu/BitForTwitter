@@ -1,7 +1,8 @@
-package com.robyn.bitty.adapters
+package com.robyn.bitty.main
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.ShareActionProvider
@@ -12,12 +13,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import com.robyn.bitty.R
-import com.robyn.bitty.favoAction
 import com.robyn.bitty.activities.TweetSoloActivity
-import com.robyn.bitty.atScreenName
-import com.robyn.bitty.biggerProfileImageUrl
-import com.robyn.bitty.createdAtTime
-import com.robyn.bitty.loadProfileImage
+import com.robyn.bitty.utils.*
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterCore
@@ -28,6 +25,8 @@ import kotlinx.android.synthetic.main.fragment_tweet_actions.view.*
 import kotlinx.android.synthetic.main.item_in_list.view.*
 import kotlinx.android.synthetic.main.quote_layout.view.*
 import kotlinx.android.synthetic.main.tweet_layout_in_list.view.*
+import java.net.URI
+import java.net.URL
 
 /**
  * Created by yifei on 9/19/2017.
@@ -114,7 +113,12 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
             holderItemView.post_time.text = createdAtTime(retweet.createdAt)
             holderItemView.tweet_text.text = retweet.text // how to link mask
 
+            playVideo(tweet,mContext, holderItemView.player_view)
+
+            //holderItemView.player_view.setPlayer(getPlayer(mContext))
         }
+
+
 
         fun bindQuote(tweet: Tweet) {
             if (tweet.quotedStatus == null) return
@@ -134,9 +138,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
             holderItemView.user_name_quote.text = quote.user.name
             holderItemView.user_screen_name_quote.text = atScreenName(quote.user)
             holderItemView.tweet_text_quote.text = quote.text
-
         }
-
 
         /**
          *  holder.itemView = tweet layout + tweet actions layout
@@ -178,13 +180,11 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
          * setup listeners for tweet actions
          */
         fun setupActionListeners() {
-
         }
 
         holderItemView.retweet_layout.setOnClickListener(object : View.OnClickListener {
             internal var client = TwitterCore.getInstance().apiClient
             internal var statusesService = client.statusesService
-
             override fun onClick(v: View) {
                 val builder = AlertDialog.Builder(mContext)
                 val dialView = LayoutInflater.from(mContext)
@@ -197,11 +197,9 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
                     val retweetCall = statusesService.retweet(tweetId, false)
                     retweetCall.enqueue(object : Callback<Tweet>() {
                         override fun success(result: Result<Tweet>) {
-
                         }
 
                         override fun failure(exception: TwitterException) {
-
                         }
                     })
                     retweetDial.dismiss()
@@ -217,7 +215,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
                         }
 
                         override fun failure(exception: TwitterException) {
-
                         }
                     })
                 }
@@ -245,7 +242,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
         // bind data
 
-
         fun displayNotes(tweet: Tweet) {
             val notes = tweet.favoriteCount + tweet.retweetCount
             if (notes != 0) {
@@ -268,8 +264,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
                 // how to get tweet id before data binding?
             })
         }
-
-
     }
 
     /**
@@ -293,7 +287,6 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
             Log.i(TAG, "madapter.notifyitemrangeinserted(), madapter.itemcount = ${mAdapter!!.itemCount}")
         }
     }
-
 
     /**
      *
@@ -331,6 +324,5 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                        })
 //        disposable.add(disposable)
 //    }
-
 
 }

@@ -1,12 +1,7 @@
 package com.robyn.bitty.main
 
-import android.app.Activity
-import android.content.Context
-import android.support.v4.content.ContextCompat.startActivity
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.robyn.bitty.data.RemoteDataSource
-import com.robyn.bitty.myLog
+import com.robyn.bitty.utils.myLog
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 import io.reactivex.Observable

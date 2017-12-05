@@ -9,10 +9,10 @@ import android.util.Log
 import android.view.View
 
 import com.robyn.bitty.R
-import com.robyn.bitty.favoAction
-import com.robyn.bitty.atScreenName
-import com.robyn.bitty.createdAtTime
-import com.robyn.bitty.loadOriginalProfileImage
+import com.robyn.bitty.utils.favoAction
+import com.robyn.bitty.utils.atScreenName
+import com.robyn.bitty.utils.createdAtTime
+import com.robyn.bitty.utils.loadOriginalProfileImage
 //import com.robyn.bitty.ui.timelines.*
 import kotlinx.android.synthetic.main.fragment_tweet_actions.*
 

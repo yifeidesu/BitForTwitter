@@ -31,7 +31,7 @@ import com.robyn.bitty.activities.LoginActivity
 import com.robyn.bitty.data.RemoteDataSource
 import com.robyn.bitty.fragments.HomeTimelineFragment
 import com.robyn.bitty.fragments.SearchFragment
-import com.twitter.sdk.android.tweetcomposer.ComposerActivity
+import com.robyn.bitty.utils.*
 
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
@@ -151,15 +151,6 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
 
         return Observable.defer(callable)
     }
-
-//    fun composeTweet() {
-//        val session = TwitterCore.getInstance().sessionManager
-//                .activeSession
-//        val intent = ComposerActivity.Builder(this@MainActivity)
-//                .session(session)
-//                .createIntent()
-//        startActivity(intent)
-//    }
 
     // for drawer
     override fun onBackPressed() {

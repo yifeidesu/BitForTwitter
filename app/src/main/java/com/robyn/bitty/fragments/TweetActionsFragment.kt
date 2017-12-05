@@ -11,7 +11,7 @@
 //import android.widget.LinearLayout
 //import android.widget.Toast
 //
-//import com.robyn.bitty.ColorToggle
+//import com.robyn.bitty.utils.ColorToggle
 //import com.robyn.bitty.R
 //import com.robyn.bitty.ui.ReplyActivity
 //import com.twitter.sdk.android.core.Callback

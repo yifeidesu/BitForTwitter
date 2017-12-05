@@ -1,18 +1,16 @@
-package com.robyn.bitty
+package com.robyn.bitty.utils
 
 import android.content.Context
 import android.graphics.PorterDuff
 import android.widget.ImageView
+import com.robyn.bitty.R
 
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
-import com.twitter.sdk.android.core.TwitterApiClient
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.core.services.FavoriteService
-
-import retrofit2.Call
 
 /**
  * todo move to utils file

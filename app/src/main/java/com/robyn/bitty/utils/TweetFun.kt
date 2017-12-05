@@ -1,4 +1,4 @@
-package com.robyn.bitty
+package com.robyn.bitty.utils
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -9,7 +9,7 @@ import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestOptions
-import com.robyn.bitty.adapters.TimelineAdapter
+import com.robyn.bitty.main.TimelineAdapter
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.core.models.User
@@ -107,7 +107,7 @@ object Fetch {
                             }
 
                         })
-        com.robyn.bitty.disposable.add(disposable)
+        com.robyn.bitty.utils.disposable.add(disposable)
     }
 
     /**

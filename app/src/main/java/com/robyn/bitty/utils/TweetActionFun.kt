@@ -1,4 +1,4 @@
-package com.robyn.bitty
+package com.robyn.bitty.utils
 
 import android.content.Context
 import android.util.Log
@@ -32,6 +32,6 @@ fun favoAction(context: Context, tweetId: Long,
 
     favoImageView.setOnClickListener {
         ColorToggle.toggleFavo(tweetId, favoImageView, context)
-        Log.i(com.robyn.bitty.TAG, "toggle color called")
+        Log.i(TAG, "toggle color called")
     }
 }
