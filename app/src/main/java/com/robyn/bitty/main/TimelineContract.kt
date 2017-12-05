@@ -15,5 +15,6 @@ interface TimelineContract {
         //fun composeTweet(context: Context)
         fun isVerified(): Observable<Boolean>
         fun checkAuth():Boolean
+        fun composeTweet(activity: MainActivity)
     }
 }

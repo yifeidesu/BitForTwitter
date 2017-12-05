@@ -3,6 +3,7 @@ package com.robyn.bitty.main
 import android.app.Activity
 import android.content.Context
 import android.support.v4.content.ContextCompat.startActivity
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.robyn.bitty.data.RemoteDataSource
 import com.robyn.bitty.myLog
@@ -38,6 +39,16 @@ class TimelinePresenter(view: TimelineContract.View, dataSource: RemoteDataSourc
 
     override fun checkAuth(): Boolean {
         return true
+    }
+
+    override fun composeTweet(activity:MainActivity) {
+        //    fun composeTweet() {
+        val session = TwitterCore.getInstance().sessionManager.activeSession
+        val intent = ComposerActivity.Builder(activity)
+                .session(session)
+                .createIntent()
+        activity.startActivity(intent)
+//    }
     }
 
     /**

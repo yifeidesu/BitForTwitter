@@ -31,6 +31,7 @@ import com.robyn.bitty.activities.LoginActivity
 import com.robyn.bitty.data.RemoteDataSource
 import com.robyn.bitty.fragments.HomeTimelineFragment
 import com.robyn.bitty.fragments.SearchFragment
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
@@ -160,8 +161,6 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
 //        startActivity(intent)
 //    }
 
-
-
     // for drawer
     override fun onBackPressed() {
         if (drawer_layout!!.isDrawerOpen(GravityCompat.START)) {
@@ -171,7 +170,7 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
         }
     }
 
-    // the drawer nav
+    // the drawer navac
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
 
