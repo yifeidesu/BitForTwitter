@@ -1,4 +1,4 @@
-package com.robyn.bitty.main
+package com.robyn.bitty.timeline
 
 import android.content.Context
 import android.content.Intent

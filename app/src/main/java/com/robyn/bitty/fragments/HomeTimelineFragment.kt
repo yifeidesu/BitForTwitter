@@ -13,7 +13,7 @@ import android.widget.Button
 
 import android.support.v7.widget.RecyclerView.*
 import com.robyn.bitty.*
-import com.robyn.bitty.main.TimelineAdapter
+import com.robyn.bitty.timeline.TimelineAdapter
 import com.robyn.bitty.utils.Fetch
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_hometimeline.*

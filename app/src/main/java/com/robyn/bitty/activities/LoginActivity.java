@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.robyn.bitty.R;
-import com.robyn.bitty.main.MainActivity;
+import com.robyn.bitty.timeline.MainActivity;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;

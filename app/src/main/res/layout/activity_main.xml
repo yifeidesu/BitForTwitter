@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.robyn.bitty.main.MainActivity">
+    tools:context="com.robyn.bitty.timeline.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"

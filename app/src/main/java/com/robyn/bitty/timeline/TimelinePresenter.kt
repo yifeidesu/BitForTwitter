@@ -1,4 +1,4 @@
-package com.robyn.bitty.main
+package com.robyn.bitty.timeline
 
 import com.robyn.bitty.data.RemoteDataSource
 import com.robyn.bitty.utils.myLog

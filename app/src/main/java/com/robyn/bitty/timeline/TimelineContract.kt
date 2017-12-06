@@ -1,6 +1,5 @@
-package com.robyn.bitty.main
+package com.robyn.bitty.timeline
 
-import android.content.Context
 import com.robyn.bitty.BasePresenter
 import com.robyn.bitty.BaseView
 import io.reactivex.Observable

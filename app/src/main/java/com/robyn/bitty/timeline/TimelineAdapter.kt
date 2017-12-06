@@ -1,8 +1,7 @@
-package com.robyn.bitty.main
+package com.robyn.bitty.timeline
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.ShareActionProvider
@@ -25,8 +24,6 @@ import kotlinx.android.synthetic.main.fragment_tweet_actions.view.*
 import kotlinx.android.synthetic.main.item_in_list.view.*
 import kotlinx.android.synthetic.main.quote_layout.view.*
 import kotlinx.android.synthetic.main.tweet_layout_in_list.view.*
-import java.net.URI
-import java.net.URL
 
 /**
  * Created by yifei on 9/19/2017.

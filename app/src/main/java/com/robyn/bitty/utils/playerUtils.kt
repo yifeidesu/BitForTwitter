@@ -2,14 +2,12 @@ package com.robyn.bitty.utils
 
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
-import com.google.android.exoplayer2.DefaultLoadControl
+
 import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.LoadControl
+
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelection
+
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 
@@ -30,14 +28,13 @@ import java.net.URL
  */
 
 fun getPlayer(context: Context, uri: Uri): SimpleExoPlayer {
+
+    // Create the player with all default params
     val bandwidthMeter = DefaultBandwidthMeter()
     val trackSelector = DefaultTrackSelector(bandwidthMeter)
-    val loadControl = DefaultLoadControl()
+    val player = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
 
-// 2. Create the player
-    val player = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl)
-
-    // prep the player with uri
+    // Get data source from uri
     val dataSourceFactory = DefaultDataSourceFactory(context,
             Util.getUserAgent(context, "videodemoapp"), bandwidthMeter)
 
@@ -46,19 +43,50 @@ fun getPlayer(context: Context, uri: Uri): SimpleExoPlayer {
     val videoSource = ExtractorMediaSource(uri,
             dataSourceFactory, extractorsFactory, null, null)
 
+    // Set the data source to the player
     player.prepare(videoSource)
-
 
     return player
 }
 
+/**
+ * This method decides if the [tweet] has video url.
+ * If it does, it has a player to player the video on the url
+ *
+ * Currently works for mp4 only, executor type?
+ */
 fun playVideo(tweet: Tweet, context: Context, playerView: SimpleExoPlayerView) {
 
-    getVideoUrl(tweet)?.apply { playerView.player = getPlayer(context, this) }
-
-    //playerView.player = getPlayer(context, uri)
+    getVideoUrl(tweet)?.apply {
+        playerView.player = getPlayer(context, this)
+        myLog(msg = "player's video url = ${this}")
+    }
 }
 
 fun getVideoUrl(tweet: Tweet): Uri? {
-    return Uri.parse(tweet.extendedEntities?.media?.get(0)?.mediaUrl)
+    var uri: Uri? = null
+
+//    with(tweet.extendedEntities.media) {
+//        if (this.isEmpty()) return@with
+//        myLog(msg = "media size = ${this.size}")
+//
+//    }
+
+    // rewrite logic
+    tweet.extendedEntities?.apply {
+        if (!this.media.isEmpty()) {
+            with(tweet.extendedEntities.media.get(0).videoInfo) {
+                this?.apply {
+                    if (!this.variants.isEmpty()) {
+                        this.variants[0].url.apply {
+                            uri = Uri.parse(this)
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    return uri
 }

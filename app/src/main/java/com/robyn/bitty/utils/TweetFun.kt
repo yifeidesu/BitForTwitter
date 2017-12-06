@@ -9,7 +9,7 @@ import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestOptions
-import com.robyn.bitty.main.TimelineAdapter
+import com.robyn.bitty.timeline.TimelineAdapter
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.core.models.User
