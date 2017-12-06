@@ -61,13 +61,14 @@ fun getPlayer(context: Context, uri: Uri): SimpleExoPlayer {
  */
 fun playVideo(tweet: Tweet, context: Context, playerView: SimpleExoPlayerView) {
 
-    getVideoUrl(tweet)?.apply {
-        playerView.player = getPlayer(context, this)
-        playerView.visibility = View.VISIBLE
+    with(getVideoUrl(tweet)) {
+        if (this!=null) {
+            playerView.player = getPlayer(context, this)
+            playerView.visibility = View.VISIBLE
 
-        //playerView.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-
-        myLog(msg = "player's video url = ${this}")
+        }else{
+            playerView.visibility = View.GONE
+        }
     }
 }
 
