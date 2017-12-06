@@ -2,6 +2,8 @@ package com.robyn.bitty.utils
 
 import android.content.Context
 import android.net.Uri
+import android.view.View
+import android.view.ViewGroup
 
 import com.google.android.exoplayer2.ExoPlayerFactory
 
@@ -19,7 +21,6 @@ import com.google.android.exoplayer2.util.Util.getUserAgent
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.twitter.sdk.android.core.models.Tweet
-
 
 /**
  * Methods to play a video contained in a Tweet
@@ -56,16 +57,19 @@ fun getPlayer(context: Context, uri: Uri): SimpleExoPlayer {
  * This method decides if the [tweet] has video url.
  * If it does, it has a player to player the video on the url
  *
- * Currently works for mp4 only, executor type?
+ * Currently works only for some types, mp4, gif ...
  */
 fun playVideo(tweet: Tweet, context: Context, playerView: SimpleExoPlayerView) {
 
     getVideoUrl(tweet)?.apply {
         playerView.player = getPlayer(context, this)
+        playerView.visibility = View.VISIBLE
+
+        //playerView.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+
         myLog(msg = "player's video url = ${this}")
     }
 }
-
 
 /**
  * Returns the [tweet]'s 1st video url, if it has any.
