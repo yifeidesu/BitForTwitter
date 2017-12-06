@@ -27,6 +27,9 @@ import com.twitter.sdk.android.core.models.Tweet
  * Created by yifei on 12/4/2017.
  */
 
+/**
+ * Create a [SimpleExoPlayer], set [uri] as data source to it, and return it.
+ */
 fun getPlayer(context: Context, uri: Uri): SimpleExoPlayer {
 
     // Create the player with all default params
