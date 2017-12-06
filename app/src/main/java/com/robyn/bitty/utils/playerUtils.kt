@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.util.Util.getUserAgent
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.twitter.sdk.android.core.models.Tweet
-import java.net.URL
+
 
 /**
  * Methods to play a video contained in a Tweet
@@ -63,14 +63,12 @@ fun playVideo(tweet: Tweet, context: Context, playerView: SimpleExoPlayerView) {
     }
 }
 
+
+/**
+ * Returns the [tweet]'s 1st video url, if it has any.
+ */
 fun getVideoUrl(tweet: Tweet): Uri? {
     var uri: Uri? = null
-
-//    with(tweet.extendedEntities.media) {
-//        if (this.isEmpty()) return@with
-//        myLog(msg = "media size = ${this.size}")
-//
-//    }
 
     // rewrite logic
     tweet.extendedEntities?.apply {
