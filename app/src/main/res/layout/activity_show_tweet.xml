@@ -10,7 +10,7 @@
     android:background="@color/white"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.robyn.bitty.activities.TweetSoloActivity">
+    tools:context="com.robyn.bitty.soloTweet.TweetSoloActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"

@@ -1,4 +1,4 @@
-package com.robyn.bitty.fragments;
+package com.robyn.bitty.soloTweet;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

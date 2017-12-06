@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import com.robyn.bitty.R
-import com.robyn.bitty.activities.TweetSoloActivity
+import com.robyn.bitty.soloTweet.TweetSoloActivity
 import com.robyn.bitty.utils.*
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result

@@ -1,4 +1,4 @@
-package com.robyn.bitty.fragments
+package com.robyn.bitty.timeline
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,7 +13,6 @@ import android.widget.Button
 
 import android.support.v7.widget.RecyclerView.*
 import com.robyn.bitty.*
-import com.robyn.bitty.timeline.TimelineAdapter
 import com.robyn.bitty.utils.Fetch
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_hometimeline.*

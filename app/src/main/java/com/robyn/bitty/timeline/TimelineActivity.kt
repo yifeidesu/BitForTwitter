@@ -27,10 +27,9 @@ import java.net.MalformedURLException
 import java.net.URL
 
 import com.robyn.bitty.*
-import com.robyn.bitty.activities.LoginActivity
+import com.robyn.bitty.login.LoginActivity
 import com.robyn.bitty.data.RemoteDataSource
-import com.robyn.bitty.fragments.HomeTimelineFragment
-import com.robyn.bitty.fragments.SearchFragment
+import com.robyn.bitty.soloTweet.SearchFragment
 import com.robyn.bitty.utils.*
 
 import io.reactivex.Observable
@@ -42,7 +41,7 @@ import kotlinx.android.synthetic.main.drawer_activity_main.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import java.util.concurrent.Callable
 
-class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.OnNavigationItemSelectedListener {
+class TimelineActivity : AppCompatActivity(), TimelineContract.View, NavigationView.OnNavigationItemSelectedListener {
 
     override var presenter: TimelineContract.Presenter = TimelinePresenter(this, RemoteDataSource)
 
@@ -258,9 +257,9 @@ class MainActivity : AppCompatActivity(), TimelineContract.View, NavigationView.
     }
 
     companion object {
-        private val TAG = MainActivity::class.java.simpleName
+        private val TAG = TimelineActivity::class.java.simpleName
         fun newIntent(context: Context): Intent {
-            return Intent(context, MainActivity::class.java)
+            return Intent(context, TimelineActivity::class.java)
         }
     }
 }

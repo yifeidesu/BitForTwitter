@@ -1,4 +1,4 @@
-package com.robyn.bitty.activities;
+package com.robyn.bitty.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.robyn.bitty.R;
-import com.robyn.bitty.timeline.MainActivity;
+import com.robyn.bitty.timeline.TimelineActivity;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                startActivity(MainActivity.Companion.newIntent(getApplicationContext()));
+                startActivity(TimelineActivity.Companion.newIntent(getApplicationContext()));
                 Log.i(TAG, "login session success!");
             }
 

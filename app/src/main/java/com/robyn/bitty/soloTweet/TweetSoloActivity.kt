@@ -1,4 +1,4 @@
-package com.robyn.bitty.activities
+package com.robyn.bitty.soloTweet
 
 import android.content.Context
 import android.content.Intent
@@ -13,11 +13,17 @@ import com.robyn.bitty.utils.favoAction
 import com.robyn.bitty.utils.atScreenName
 import com.robyn.bitty.utils.createdAtTime
 import com.robyn.bitty.utils.loadOriginalProfileImage
-//import com.robyn.bitty.ui.timelines.*
+
 import kotlinx.android.synthetic.main.fragment_tweet_actions.*
 
 import kotlinx.android.synthetic.main.tweet_layout_solo.*
 
+/**
+ * This Activity is to show a stand-alone tweet
+ *
+ *
+ * todo add a fragment in this
+ */
 class TweetSoloActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

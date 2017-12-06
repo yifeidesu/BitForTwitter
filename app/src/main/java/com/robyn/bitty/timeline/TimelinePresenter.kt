@@ -36,7 +36,7 @@ class TimelinePresenter(view: TimelineContract.View, dataSource: RemoteDataSourc
         return true
     }
 
-    override fun composeTweet(activity:MainActivity) {
+    override fun composeTweet(activity: TimelineActivity) {
         //    fun composeTweet() {
         val session = TwitterCore.getInstance().sessionManager.activeSession
         val intent = ComposerActivity.Builder(activity)
