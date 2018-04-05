@@ -1,9 +1,8 @@
-package com.robyn.bitty.utils
+package com.robyn.bitty.utils.tweetUtils
 
 import android.content.Context
 import android.net.Uri
 import android.view.View
-import android.view.ViewGroup
 
 import com.google.android.exoplayer2.ExoPlayerFactory
 
@@ -14,16 +13,15 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.extractor.ExtractorsFactory
-import com.google.android.exoplayer2.util.Util.getUserAgent
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.twitter.sdk.android.core.models.Tweet
 
 /**
  * Methods to play a video contained in a Tweet
+ *
+ * todo: replace by glide!?
  *
  * Created by yifei on 12/4/2017.
  */

@@ -19,14 +19,15 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * Created by yifei on 7/17/2017.
  */
 
-public class Bitty extends Application {
+public class BitApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        ButterKnife.setDebug(BuildConfig.DEBUG);
+        ButterKnife.setDebug(BuildConfig.DEBUG); // todo remove
 
+        // Auth configuration
         TwitterConfig config = new TwitterConfig.Builder(this)
                 .logger(new DefaultLogger(Log.DEBUG))
                 .twitterAuthConfig(new TwitterAuthConfig
@@ -35,11 +36,13 @@ public class Bitty extends Application {
                 .build();
         Twitter.initialize(config);
 
+        // Setup OkHttp client
         final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         final OkHttpClient customClient = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor).build();
 
+        // Setup twitter api client
         final TwitterSession activeSession = TwitterCore.getInstance()
                 .getSessionManager().getActiveSession();
 

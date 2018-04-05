@@ -1,10 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    //ext.kotlin_version = '1.1.51'
     ext {
-        build_tools_version = '3.0.1' // cannot refer to this?
-        kotlin_version = '1.1.61'
+        build_tools_version = '3.2.0-alpha06'
+        kotlin_version = '1.2.31'
+
+        support_version ='27.1.0'
+
+        gson_version = '2.3.0'
+        glide_version = '4.6.1'
     }
 
     repositories {
@@ -14,7 +18,7 @@ buildscript {
         maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "com.android.tools.build:gradle:$build_tools_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 

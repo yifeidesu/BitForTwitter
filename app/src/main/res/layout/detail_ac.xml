@@ -10,7 +10,7 @@
     android:background="@color/white"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.robyn.bitty.soloTweet.TweetSoloActivity">
+    tools:context="com.robyn.bitty.detail.TweetSoloActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_layout"
@@ -41,7 +41,7 @@
     </ScrollView>
 
     <include
-        layout="@layout/fragment_tweet_actions"
+        layout="@layout/actions_fg"
         android:layout_below="@id/tweet_layout_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

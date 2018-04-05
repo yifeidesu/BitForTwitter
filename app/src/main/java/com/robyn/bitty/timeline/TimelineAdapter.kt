@@ -1,6 +1,5 @@
 package com.robyn.bitty.timeline
 
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
@@ -10,46 +9,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import com.robyn.bitty.R
-import com.robyn.bitty.soloTweet.TweetSoloActivity
-import com.robyn.bitty.utils.*
+import com.robyn.bitty.data.DataSource
+import com.robyn.bitty.detail.TweetSoloActivity
+import com.robyn.bitty.utils.tweetUtils.favoAction
+import com.robyn.bitty.utils.tweetUtils.playVideo
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.models.Tweet
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_tweet_actions.view.*
+import kotlinx.android.synthetic.main.actions_fg.view.*
 import kotlinx.android.synthetic.main.item_in_list.view.*
 import kotlinx.android.synthetic.main.quote_layout.view.*
 import kotlinx.android.synthetic.main.tweet_layout_in_list.view.*
 
 /**
- * Created by yifei on 9/19/2017.
+ * the mTweets passed in here already updated
  */
-
-/**
- * the tweets passed in here already updated
- */
-class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
-        RecyclerView.Adapter<TimelineAdapter.HomeHolder>() {
+class TimelineAdapter(var mTweets: MutableList<Tweet>) :
+    RecyclerView.Adapter<TimelineAdapter.HomeHolder>() { // todo context move to presenter
 
     var mAdapter: TimelineAdapter? = null
 
-    val TAG = "TimelineAdapter"
+    //val mContext = context
 
-    val mContext = context
-
-    var composite: CompositeDisposable = CompositeDisposable()
-
-    val mTweets: MutableList<Tweet> = ArrayList<Tweet>()
-
-    // private val mTweetToAdapter: MutableList<Tweet> = mTweets
-    // private val mOnClickListener: View.OnClickListener() {}
+    // mTweets = ArrayList<Tweet>()
+    var mTweetsUpdate = ArrayList<Tweet>()
 
     init {
-        mTweets.addAll(0, tweets)
+        mTweets.addAll(0, mTweets)
         notifyDataSetChanged()
     }
 
@@ -60,13 +49,9 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
     override fun onBindViewHolder(holder: HomeHolder, position: Int) {
 
-        // remove previous view if the holder is not empty,
-        // otherwise holder shows multiple tweets in one single holder
-//            if (holder.itemView.my_item_layout.childCount != 0) {
-//                holder.itemView.my_item_layout.removeAllViews()
-//            }
-
         val holderItemView = holder.itemView
+
+        val context = holderItemView.context
 
         val tweet = mTweets[position] // position in the recyclerview, not the list?!
         val tweetId = tweet.getId()
@@ -85,15 +70,18 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                }
 
             with(holderItemView) {
-                loadProfileImage(context, biggerProfileImageUrl(tweet.user.profileImageUrl),
-                        user_profile_image, 0)
+                DataSource.INSTANCE.loadProfileImage(
+                    context, DataSource.INSTANCE.biggerProfileImageUrl(tweet.user.profileImageUrl),
+                    user_profile_image, 0
+                )
                 user_name.text = tweet.user.name
-                user_screen_name.text = atScreenName(tweet.user)
-                post_time.text = createdAtTime(tweet.createdAt)
+                user_screen_name.text = tweet.user.atScreenName()
+                post_time.text = DataSource.INSTANCE.createdAtTime(tweet.createdAt)
                 tweet_text.text = tweet.text // how to link mask
             }
         }
 
+        // comprisete
         fun bindRetweet(tweet: Tweet) {
             val retweet = tweet.retweetedStatus
 
@@ -101,21 +89,27 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
             holderItemView.retweet_by.visibility = View.VISIBLE
 
-            loadProfileImage(mContext, biggerProfileImageUrl(retweet.user.profileImageUrl),
-                    holderItemView.user_profile_image, 0)
+            DataSource.INSTANCE.loadProfileImage(
+                context, DataSource.INSTANCE.biggerProfileImageUrl(retweet.user.profileImageUrl),
+                holderItemView.user_profile_image, 0
+            )
+
+            //dataSource.loadProfileImage(context, )
+
+            retweet.user.setProfileImageToImageView(
+                context, holderItemView.user_profile_image
+            )
 
             holderItemView.retweet_by.text = userRetweeted
             holderItemView.user_name.text = retweet.user.name
-            holderItemView.user_screen_name.text = atScreenName(retweet.user)
-            holderItemView.post_time.text = createdAtTime(retweet.createdAt)
+            holderItemView.user_screen_name.text = retweet.user.atScreenName()
+            holderItemView.post_time.text = DataSource.INSTANCE.createdAtTime(retweet.createdAt)
             holderItemView.tweet_text.text = retweet.text // how to link mask
 
-            playVideo(tweet,mContext, holderItemView.player_view)
+            playVideo(tweet, context, holderItemView.player_view)
 
             //holderItemView.player_view.setPlayer(getPlayer(mContext))
         }
-
-
 
         fun bindQuote(tweet: Tweet) {
             if (tweet.quotedStatus == null) return
@@ -125,15 +119,23 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
             holderItemView.quote_layout.visibility = View.VISIBLE
 
-            loadProfileImage(mContext, biggerProfileImageUrl(tweet.user.profileImageUrl),
-                    holderItemView.user_profile_image, 0)
+//            DataSource.INSTANCE.loadProfileImage(
+//                mContext, DataSource.INSTANCE.biggerProfileImageUrl(tweet.user.profileImageUrl),
+//                holderItemView.user_profile_image, 0
+//            )
+
+            tweet.user.setProfileImageToImageView(
+                holderItemView.context, holderItemView.user_profile_image
+            )
+
             holderItemView.user_name.text = tweet.user.name
-            holderItemView.user_screen_name.text = atScreenName(tweet.user)
-            holderItemView.post_time.text = createdAtTime(tweet.createdAt)
+            holderItemView.user_screen_name.text = tweet.user.atScreenName()
+            holderItemView.post_time.text = DataSource.INSTANCE.createdAtTime(tweet.createdAt)
             holderItemView.tweet_text.text = tweet.text // how to link mask
 
             holderItemView.user_name_quote.text = quote.user.name
-            holderItemView.user_screen_name_quote.text = atScreenName(quote.user)
+            holderItemView.user_screen_name_quote.text =
+                    quote.user.atScreenName()
             holderItemView.tweet_text_quote.text = quote.text
         }
 
@@ -144,18 +146,19 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
          */
 
         val onClickListenerItem = View.OnClickListener {
-            Toast.makeText(mContext, "show tweet listner called", Toast.LENGTH_SHORT).show()
-            Log.i(TAG, "onClickShowTweetListener invoked")
 
-            mContext.startActivity(TweetSoloActivity.newIntent(
-                    mContext,
+            context.startActivity(
+                TweetSoloActivity.newIntent(
+                    context,
                     tweet.id,
                     tweet.favorited,
                     tweet.user.name,
                     tweet.user.screenName,
                     tweet.user.profileImageUrl,
                     tweet.text,
-                    tweet.createdAt))
+                    tweet.createdAt
+                )
+            )
         }
 
         holderItemView.tweet_layout_in_list.setOnClickListener(onClickListenerItem)
@@ -183,9 +186,9 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
             internal var client = TwitterCore.getInstance().apiClient
             internal var statusesService = client.statusesService
             override fun onClick(v: View) {
-                val builder = AlertDialog.Builder(mContext)
-                val dialView = LayoutInflater.from(mContext)
-                        .inflate(R.layout.dial_retweet_choice, null)
+                val builder = AlertDialog.Builder(context)
+                val dialView = LayoutInflater.from(context)
+                    .inflate(R.layout.dial_retweet_choice, null)
                 builder.setView(dialView).create()
                 val retweetDial = builder.show()
 
@@ -208,7 +211,8 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
                     val retweetQuoteCall = statusesService.retweet(tweetId, true)
                     retweetQuoteCall.enqueue(object : Callback<Tweet>() {
                         override fun success(result: Result<Tweet>) {
-                            val tweetUrl = "https://twitter.com/${tweet.inReplyToScreenName}/status/${tweet.idStr}"
+                            val tweetUrl =
+                                "https://twitter.com/${tweet.inReplyToScreenName}/status/${tweet.idStr}"
                         }
 
                         override fun failure(exception: TwitterException) {
@@ -227,15 +231,19 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 
             shareIntent.putExtra(Intent.EXTRA_TEXT, "sharing from BittyForTwitter: " + tweetUrl)
             shareIntent.type = "text/plain"
-            mContext.startActivity(Intent.createChooser(shareIntent,
-                    mContext.resources.getText(R.string.app_name)))
-            val mShareActionProvider = ShareActionProvider(mContext)
+            context.startActivity(
+                Intent.createChooser(
+                    shareIntent,
+                    context.resources.getText(R.string.app_name)
+                )
+            )
+            val mShareActionProvider = ShareActionProvider(context)
             mShareActionProvider.setShareIntent(shareIntent)
         }
 
 
 
-        favoAction(mContext, tweet, holderItemView.favo_image)
+        favoAction(context, tweet, holderItemView.favo_image)
 
         // bind data
 
@@ -252,8 +260,8 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
         return mTweets.size
     }
 
-    inner class HomeHolder(inflater: LayoutInflater, parent: ViewGroup)
-        : RecyclerView.ViewHolder(inflater.inflate(R.layout.item_in_list, parent, false)) {
+    inner class HomeHolder(inflater: LayoutInflater, parent: ViewGroup) :
+        RecyclerView.ViewHolder(inflater.inflate(R.layout.item_in_list, parent, false)) {
 
         init {
 
@@ -267,22 +275,29 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
      * @param updateTweets the list to be added to the current list
      */
     fun updateRecyclerUI(updateTweets: List<Tweet>, homeTimeline: RecyclerView) {
-        val TAG = "updateRecyclerUI"
-        Log.i(TAG, "updateTweets.size = ${updateTweets.size}")
 
         if (updateTweets.isEmpty()) return
         mTweets.addAll(0, updateTweets)
 
+        // todo rewrite
         if (mAdapter == null) {
-            //mTweet = updateTweets.toMutableList()
-            mAdapter = TimelineAdapter(mContext, mTweets)
+            mAdapter = TimelineAdapter(mTweets)
             homeTimeline.adapter = mAdapter
-            Log.i(TAG, "madapter created")
         } else {
-            //mTweets.addAll(0, updateTweets)
             mAdapter!!.notifyDataSetChanged()
-            Log.i(TAG, "madapter.notifyitemrangeinserted(), madapter.itemcount = ${mAdapter!!.itemCount}")
         }
+    }
+
+    fun updateRecyclerUI(updateTweets: List<Tweet>) {
+
+        if (updateTweets.isEmpty()) return
+        mTweets.addAll(0, updateTweets)
+
+        this.notifyDataSetChanged()
+    }
+
+    companion object {
+        const val TAG = "TimelineAdapter"
     }
 
     /**
@@ -293,7 +308,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //    fun fetchTweets(endId:Long? = null, fetchNew: Boolean = true) {
 //        var mTweetsUpdate: MutableList<Tweet> = ArrayList() // to pass the result from onnext to oncomplete
 //
-//        val disposable = fetchNewObservable(endId, fetchNew)
+//        val mCompositeDisposable = fetchNewObservable(endId, fetchNew)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread()) // receive on main thread
 //                .subscribe(
@@ -301,7 +316,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                            Log.i(TAG, "RESPONSE SIZE =  ${result.size}")
 //                            mTweetsUpdate = result.toMutableList()
 //
-//                            Toast.makeText(mContext, "${result.size} new tweets", Toast.LENGTH_SHORT).show()
+//                            Toast.makeText(context, "${result.size} new mTweets", Toast.LENGTH_SHORT).show()
 //                        },
 //                        { err -> Log.e(com.robyn.bitty.ui.getTAG, err.message) },
 //                        {
@@ -319,7 +334,7 @@ class TimelineAdapter(context: Context, tweets: MutableList<Tweet>) :
 //                                }
 //                            }
 //                        })
-//        disposable.add(disposable)
+//        mCompositeDisposable.add(mCompositeDisposable)
 //    }
 
 }

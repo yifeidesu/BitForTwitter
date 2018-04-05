@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.robyn.bitty.R;
-import com.robyn.bitty.timeline.TimelineActivity;
+import com.robyn.bitty.timeline.drawer.DrawerActivity;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login_ac);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,12 +46,13 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                startActivity(TimelineActivity.Companion.newIntent(getApplicationContext()));
-                Log.i(TAG, "login session success!");
+                startActivity(DrawerActivity.Companion.newIntent(getApplicationContext()));
             }
 
             @Override
             public void failure(TwitterException exception) {
+
+                // todo change to snackbar
                 Toast.makeText(getApplicationContext(),
                         "Sorry. Auth failed.", Toast.LENGTH_LONG).show();
                 Log.i(TAG, exception.getMessage());

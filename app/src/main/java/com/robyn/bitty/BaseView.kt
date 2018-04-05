@@ -5,5 +5,5 @@ package com.robyn.bitty
  */
 interface BaseView<T> {
 
-    var presenter : T
+    var mPresenter : T
 }
