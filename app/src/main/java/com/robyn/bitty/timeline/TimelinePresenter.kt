@@ -28,6 +28,8 @@ class TimelinePresenter(
     var mTweets = ArrayList<Tweet>()
     var mTweetsUpdate = ArrayList<Tweet>()
 
+    private var mQueryString: String = ""
+
     init {
         view.mPresenter = this
         //mAdapter = TimelineAdapter(mTweets)
@@ -49,8 +51,25 @@ class TimelinePresenter(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    // Initial loading. check if list not empty, use existing
     override fun start() {
-        loadTweets()
+        if (mTweets.isEmpty()) {
+            loadTweets()
+        } else {
+            mAdapter?.notifyDataSetChanged()
+
+            setSubtitle()
+        }
+    }
+
+    private fun setSubtitle() {
+        val subtitle = when (mTimelineTypeCode) {
+            0 -> "Home"
+            1 -> mQueryString
+            else -> ""
+        }
+
+        view.setActionbarSubtitle(subtitle)
     }
 
     override fun isVerified(): Observable<Boolean> {
@@ -97,20 +116,22 @@ class TimelinePresenter(
         }
     }
 
-    private fun subscribeSearch() {
-        val searchTimelineDisposable = dataSource.searchObservable().schedule().subscribe(
+    private fun subscribeSearch(q: String = "cat") {
+        mQueryString = q
+
+        val searchTimelineDisposable = dataSource.searchObservable(q).schedule().subscribe(
             { data ->
                 data?.tweets?.let {
-
-                    it.forEach {
-                        mTweets.add(0, it)
-                    }
-
+                    it.forEach { mTweets.add(0, it) }
                     view.updateRecyclerViewData()
                 }
             },
-            { err -> Log.e(TAG, err.message) },
-            { setActionbarSubtitle("queryStr") }
+            { err ->
+                Log.e(TAG, err.message)
+                setSubtitle()
+                // todo view.show error msg
+            },
+            { setSubtitle() }
         )
         mCompositeDisposable.add(searchTimelineDisposable)
     }
@@ -123,18 +144,21 @@ class TimelinePresenter(
     private fun subscribeHome() {
         val disposable = dataSource.homeObservable().schedule().subscribe(
             { data ->
-                //Log.d(TAG, data?.size.toString())
                 data?.let {
-
-                    it.forEach {
-                        mTweets.add(0, it)
-                    }
-                    view.updateRecyclerViewData() }
+                    it.forEach { mTweets.add(0, it) }
+                    view.updateRecyclerViewData()
+                }
             },
             { err ->
                 Log.e(TAG, err.message)
+                //view.setActionbarSubtitle("Home")
+                setSubtitle()
             },
-            { setActionbarSubtitle("Home") }
+            {
+                //setActionbarSubtitle("Home")
+                setSubtitle()
+
+            }
         )
         mCompositeDisposable.add(disposable)
     }
