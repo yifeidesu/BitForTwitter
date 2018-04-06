@@ -15,10 +15,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
+import java.util.function.Consumer
 
 class TimelinePresenter(
     val view: TimelineContract.View, private val dataSource: DataSource,
-    var mTimelineTypeCode: Int = 0
+    override var mTimelineTypeCode: Int = 0
 ) :
     TimelineContract.Presenter {
 
@@ -58,11 +59,11 @@ class TimelinePresenter(
         } else {
             mAdapter?.notifyDataSetChanged()
 
-            setSubtitle()
+            setActionbarSubtitle()
         }
     }
 
-    private fun setSubtitle() {
+    private fun setActionbarSubtitle() {
         val subtitle = when (mTimelineTypeCode) {
             0 -> "Home"
             1 -> mQueryString
@@ -101,7 +102,7 @@ class TimelinePresenter(
         activity.startActivity(intent)
     }
 
-    override fun loadTweets() {
+    override fun loadTweets(q: String) {
 
         setActionbarSubtitle("Loading...")
 
@@ -111,12 +112,12 @@ class TimelinePresenter(
             }
 
             SEARCH_TIMELINE_CODE -> {
-                subscribeSearch()
+                subscribeSearch(q)
             }
         }
     }
 
-    private fun subscribeSearch(q: String = "cat") {
+    private fun subscribeSearch(q: String) {
         mQueryString = q
 
         val searchTimelineDisposable = dataSource.searchObservable(q).schedule().subscribe(
@@ -128,10 +129,10 @@ class TimelinePresenter(
             },
             { err ->
                 Log.e(TAG, err.message)
-                setSubtitle()
+                setActionbarSubtitle()
                 // todo view.show error msg
             },
-            { setSubtitle() }
+            { setActionbarSubtitle() }
         )
         mCompositeDisposable.add(searchTimelineDisposable)
     }
@@ -151,13 +152,12 @@ class TimelinePresenter(
             },
             { err ->
                 Log.e(TAG, err.message)
-                //view.setActionbarSubtitle("Home")
-                setSubtitle()
+                setActionbarSubtitle()
+                view.stopLoadingAnim()
             },
             {
-                //setActionbarSubtitle("Home")
-                setSubtitle()
-
+                setActionbarSubtitle()
+                view.stopLoadingAnim()
             }
         )
         mCompositeDisposable.add(disposable)

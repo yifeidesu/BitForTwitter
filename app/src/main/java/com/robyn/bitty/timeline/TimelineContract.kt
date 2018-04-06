@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView
 import com.robyn.bitty.BasePresenter
 import com.robyn.bitty.BaseView
 import com.robyn.bitty.timeline.drawer.DrawerActivity
-import com.twitter.sdk.android.core.models.Tweet
 import io.reactivex.Observable
 
 /**
@@ -16,12 +15,11 @@ interface TimelineContract {
 
         fun updateRecyclerViewData() // ?
 
-
-        fun setActionbarSubtitle(subtitle:String)
+        fun setActionbarSubtitle(subtitle: String)
 
         fun setAdapter(adapter: TimelineAdapter)
 
-
+        fun stopLoadingAnim()
     }
 
     interface Presenter : BasePresenter {
@@ -30,13 +28,12 @@ interface TimelineContract {
         fun checkAuth(): Boolean
         fun composeTweet(activity: DrawerActivity)
 
-
         fun disposeDisposables()
 
-        fun loadTweets()
-
+        fun loadTweets(q:String = "cat")
         fun updateRecyclerViewUI(recyclerView: RecyclerView)
-
         fun setAdapterToRecyclerView(recyclerView: RecyclerView)
+
+        var mTimelineTypeCode:Int
     }
 }
