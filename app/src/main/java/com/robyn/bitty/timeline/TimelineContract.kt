@@ -14,17 +14,14 @@ import io.reactivex.Observable
 interface TimelineContract {
     interface View : BaseView<Presenter> {
 
-        fun updateRecyclerViewData()
+        fun updateRecyclerViewData() // ?
 
-        //fun getTimelineRecyclerView():RecyclerView
 
-        fun getFragmentCallback(): TimelineFragment.TimelineFragmentCallback
+        fun setActionbarSubtitle(subtitle:String)
 
-        //fun getViewContext(): Context? // tmp
+        fun setAdapter(adapter: TimelineAdapter)
 
-        fun setAdapter(timelineAdapter: TimelineAdapter)
 
-        //fun getAdapter(tweets:MutableList<Tweet>):TimelineAdapter
     }
 
     interface Presenter : BasePresenter {
@@ -33,15 +30,13 @@ interface TimelineContract {
         fun checkAuth(): Boolean
         fun composeTweet(activity: DrawerActivity)
 
-        fun sampleList(): List<Tweet>?
-        //fun sampleObservable(): Observable<List<Tweet>>
 
         fun disposeDisposables()
 
         fun loadTweets()
 
         fun updateRecyclerViewUI(recyclerView: RecyclerView)
+
+        fun setAdapterToRecyclerView(recyclerView: RecyclerView)
     }
-
-
 }

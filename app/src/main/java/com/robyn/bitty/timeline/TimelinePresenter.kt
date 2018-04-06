@@ -3,7 +3,6 @@ package com.robyn.bitty.timeline
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.robyn.bitty.data.DataSource
-import com.robyn.bitty.data.MyTwitterApiClient
 import com.robyn.bitty.timeline.drawer.DrawerActivity
 import com.robyn.bitty.utils.myLog
 import com.twitter.sdk.android.core.TwitterCore
@@ -31,10 +30,12 @@ class TimelinePresenter(
 
     init {
         view.mPresenter = this
+        //mAdapter = TimelineAdapter(mTweets)
+    }
 
-        mAdapter = TimelineAdapter(mTweets)
-
-        // create adapter and set it to recyclerview
+    override fun setAdapterToRecyclerView(recyclerView: RecyclerView) {
+        if (mAdapter == null) mAdapter = TimelineAdapter(mTweets)
+        recyclerView.adapter = mAdapter
     }
 
     override fun disposeDisposables() {
@@ -73,33 +74,17 @@ class TimelinePresenter(
     }
 
     override fun composeTweet(activity: DrawerActivity) {
-        //    fun composeTweet() {
+
         val session = TwitterCore.getInstance().sessionManager.activeSession
         val intent = ComposerActivity.Builder(activity)
             .session(session)
             .createIntent()
         activity.startActivity(intent)
-//    }
-    }
-
-    override fun sampleList(): List<Tweet>? {
-        //return dataSource.realSample().execute().body()
-        val session = TwitterCore.getInstance().sessionManager.activeSession
-        val myTwitterApiClient = MyTwitterApiClient(session)
-        return myTwitterApiClient.statusesService.homeTimeline(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        ).execute().body()
     }
 
     override fun loadTweets() {
 
-        view.getFragmentCallback().setActionbarTitle("Loading")
+        setActionbarSubtitle("Loading...")
 
         when (mTimelineTypeCode) {
             HOME_TIMELINE_CODE -> {
@@ -120,47 +105,43 @@ class TimelinePresenter(
                     it.forEach {
                         mTweets.add(0, it)
                     }
-                    //mAdapter?.mTweets = it
-                    view.updateRecyclerViewData()
 
+                    view.updateRecyclerViewData()
                 }
             },
             { err -> Log.e(TAG, err.message) },
-            { setSubtitle("queryStr") }
+            { setActionbarSubtitle("queryStr") }
         )
         mCompositeDisposable.add(searchTimelineDisposable)
     }
 
     override fun updateRecyclerViewUI(recyclerView: RecyclerView) {
+
         mAdapter?.updateRecyclerUI(mTweets, recyclerView)
     }
 
     private fun subscribeHome() {
         val disposable = dataSource.homeObservable().schedule().subscribe(
             { data ->
+                //Log.d(TAG, data?.size.toString())
                 data?.let {
-                    view.updateRecyclerViewData()
 
-                }
+                    it.forEach {
+                        mTweets.add(0, it)
+                    }
+                    view.updateRecyclerViewData() }
             },
-            { err -> Log.e(TAG, err.message) },
-            { setSubtitle("Home") }
+            { err ->
+                Log.e(TAG, err.message)
+            },
+            { setActionbarSubtitle("Home") }
         )
         mCompositeDisposable.add(disposable)
     }
 
-    private fun setSubtitle(subtitle: String) {
-        view.getFragmentCallback().setActionbarTitle(subtitle)
+    private fun setActionbarSubtitle(subtitle: String) {
+        view.setActionbarSubtitle(subtitle)
     }
-
-//    private fun adapterUpdateData(data: List<Tweet>) {
-//
-//
-////        mAdapter?.mTweets = data as ArrayList<Tweet>
-////        mAdapter?.notifyDataSetChanged()
-//        // todo madapter.updatelist(tweets) { var tweets = tweets, this.notifycdatachange }
-//        view.updateRecyclerViewData()
-//    }
 
     companion object {
         const val TAG = "TimelinePresenter"

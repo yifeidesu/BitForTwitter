@@ -274,7 +274,7 @@ class TimelineAdapter(var mTweets: MutableList<Tweet>) :
     /**
      * @param updateTweets the list to be added to the current list
      */
-    fun updateRecyclerUI(updateTweets: List<Tweet>, homeTimeline: RecyclerView) {
+    fun updateRecyclerUI(updateTweets: List<Tweet>, recyclerView: RecyclerView) {
 
         if (updateTweets.isEmpty()) return
         mTweets.addAll(0, updateTweets)
@@ -282,7 +282,7 @@ class TimelineAdapter(var mTweets: MutableList<Tweet>) :
         // todo rewrite
         if (mAdapter == null) {
             mAdapter = TimelineAdapter(mTweets)
-            homeTimeline.adapter = mAdapter
+            recyclerView.adapter = mAdapter
         } else {
             mAdapter!!.notifyDataSetChanged()
         }
