@@ -10,12 +10,9 @@ import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
-import java.util.function.Consumer
 
 class TimelinePresenter(
     val view: TimelineContract.View, private val dataSource: DataSource,
@@ -44,12 +41,6 @@ class TimelinePresenter(
     override fun disposeDisposables() {
 
         mCompositeDisposable.dispose()
-    }
-
-    private fun <T> Observable<T>.schedule(): Observable<T> {
-
-        return this.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
     // Initial loading. check if list not empty, use existing
