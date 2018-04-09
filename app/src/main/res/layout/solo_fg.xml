@@ -76,5 +76,12 @@
             android:paddingTop="16dp"
             android:text="@{ViewUtilsKt.removeLastHttps(tweet.text)}"/>
 
+        <ImageView
+            android:id="@+id/media_image_solo"
+            loadImage="@{tweet}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/tweet_entity_images"/>
+
     </LinearLayout>
 </layout>
