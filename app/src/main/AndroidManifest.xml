@@ -28,13 +28,13 @@
             android:parentActivityName=".timeline.drawer.DrawerActivity">
         </activity>
         <activity
-            android:name=".detail.TweetSoloActivity"
+            android:name=".detail.SoloActivity"
             android:parentActivityName=".timeline.drawer.DrawerActivity"
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name=".ui.ReplyActivity"
-            android:parentActivityName=".detail.TweetSoloActivity"
+            android:parentActivityName=".detail.SoloActivity"
             android:windowSoftInputMode="adjustResize">
         </activity>
 

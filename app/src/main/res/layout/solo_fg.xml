@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.robyn.bitty.utils.ViewUtilsKt"/>
+
+        <variable
+            name="tweet"
+            type="com.twitter.sdk.android.core.models.Tweet"/>
+    </data>
+
+    <LinearLayout
+        android:id="@+id/solo_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/user_profile_image_solo"
+                imageUrl="@{tweet.user.profileImageUrl}"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:contentDescription="@string/user_s_profile_image"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/user_screen_name_solo"
+                    style="@style/tweet.userNameRetweet"
+                    textPrefixAt="@{tweet.user.screenName}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/user_name_solo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{tweet.user.name}"/>
+
+                    <TextView
+                        android:id="@+id/create_at_solo"
+                        style="@style/tweet.screenNameTextSolo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_light"
+                        android:text="@{tweet.user.createdAt}"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tweet_text_solo"
+            style="@style/tweet.entitiesTextSolo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:paddingBottom="8dp"
+            android:paddingTop="16dp"
+            android:text="@{ViewUtilsKt.removeLastHttps(tweet.text)}"/>
+
+    </LinearLayout>
+</layout>

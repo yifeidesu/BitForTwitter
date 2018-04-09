@@ -2,12 +2,11 @@ package com.robyn.bitty.login;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.robyn.bitty.R;
 import com.robyn.bitty.timeline.drawer.DrawerActivity;
@@ -16,6 +15,9 @@ import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static com.robyn.bitty.utils.UtilsKt.makeSnackbar;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -30,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_ac);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.setTitle("Login with Twitter");
@@ -52,10 +54,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void failure(TwitterException exception) {
 
-                // todo change to snackbar
-                Toast.makeText(getApplicationContext(),
-                        "Sorry. Auth failed.", Toast.LENGTH_LONG).show();
-                Log.i(TAG, exception.getMessage());
+                makeSnackbar(toolbar, R.string.auth_fail_msg_snackbar, LENGTH_SHORT);
+                Log.e(TAG, exception.getMessage());
             }
         });
     }

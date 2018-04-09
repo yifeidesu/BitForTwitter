@@ -28,6 +28,7 @@
         android:id="@+id/networking_wrong_msg"
         android:drawableTop="@drawable/ic_networking_wrong"
         android:text="@string/networking_wrong_msg"
+        android:visibility="gone"
         android:layout_margin="8dp"
         android:textAlignment="center"
         android:layout_width="match_parent"

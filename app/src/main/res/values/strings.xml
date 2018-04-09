@@ -8,7 +8,7 @@
     <string name="reply">Reply</string>
     <string name="search">Search</string>
     <string name="clear_search">Clear Search</string>
-    <string name="networking_wrong_msg">Networking wrong,\n or too often refreshes.  \n Please try again later.</string>
+    <string name="networking_wrong_msg">Networking wrong.\n Please try again later.</string>
     <string name="create">Create</string>
     <string name="tweet">Tweet</string>
     <string name="in_reply_to">In reply to \ </string>
@@ -28,4 +28,6 @@
     <string name="following">Following\ </string>
     <string name="follower">\ Follower\ </string>
     <string name="tweet_entity_images">tweet entity images</string>
+
+    <string name="auth_fail_msg_snackbar">Auth failed. Please try later.</string>
 </resources>

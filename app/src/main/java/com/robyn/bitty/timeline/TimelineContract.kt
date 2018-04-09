@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView
 import com.robyn.bitty.BasePresenter
 import com.robyn.bitty.BaseView
 import com.robyn.bitty.timeline.drawer.DrawerActivity
-import io.reactivex.Observable
 
 /**
  * Created by yifei on 11/27/2017.
@@ -20,20 +19,21 @@ interface TimelineContract {
         fun setAdapter(adapter: TimelineAdapter)
 
         fun stopLoadingAnim()
+        fun snackbarShowUpdateSize(msg:String)
     }
 
     interface Presenter : BasePresenter {
 
-        fun isVerified(): Observable<Boolean>
-        fun checkAuth(): Boolean
         fun composeTweet(activity: DrawerActivity)
 
         fun disposeDisposables()
 
-        fun loadTweets(q:String = "cat")
+        fun loadTweets(q: String = "cat", maxId: Long? = null, sinceId: Long? = null)
         fun updateRecyclerViewUI(recyclerView: RecyclerView)
         fun setAdapterToRecyclerView(recyclerView: RecyclerView)
 
-        var mTimelineTypeCode:Int
+        var mTimelineTypeCode: Int
+
+        fun loadNew()
     }
 }

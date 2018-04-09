@@ -11,9 +11,10 @@ import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterSession;
 
-import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import static com.robyn.bitty.utils.MakeSoundKt.playSound;
 
 /**
  * Created by yifei on 7/17/2017.
@@ -25,7 +26,8 @@ public class BitApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ButterKnife.setDebug(BuildConfig.DEBUG); // todo remove
+        // todo comment out
+        playSound(this);
 
         // Auth configuration
         TwitterConfig config = new TwitterConfig.Builder(this)

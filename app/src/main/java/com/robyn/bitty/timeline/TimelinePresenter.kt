@@ -4,15 +4,11 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.robyn.bitty.data.DataSource
 import com.robyn.bitty.timeline.drawer.DrawerActivity
-import com.robyn.bitty.utils.myLog
+import com.robyn.bitty.utils.schedule
 import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import java.util.concurrent.Callable
 
 class TimelinePresenter(
     val view: TimelineContract.View, private val dataSource: DataSource,
@@ -20,11 +16,14 @@ class TimelinePresenter(
 ) :
     TimelineContract.Presenter {
 
-    var mCompositeDisposable = CompositeDisposable()
+    private var mCompositeDisposable = CompositeDisposable()
 
     var mAdapter: TimelineAdapter? = null
     var mTweets = ArrayList<Tweet>()
     var mTweetsUpdate = ArrayList<Tweet>()
+
+    var mMaxId: Long = 0 // latest / most recent
+    var mMinId: Long = 0 // oldest
 
     private var mQueryString: String = ""
 
@@ -64,26 +63,6 @@ class TimelinePresenter(
         view.setActionbarSubtitle(subtitle)
     }
 
-    override fun isVerified(): Observable<Boolean> {
-
-        val observable = Observable.defer(Callable<ObservableSource<Boolean>> {
-            try {
-                return@Callable Observable.just(checkAuth())
-            } catch (e: Exception) {
-                myLog(this.toString(), e.toString())
-                return@Callable null
-            }
-        })
-
-        mCompositeDisposable.add(observable as Disposable) // todo can i ?
-
-        return observable
-    }
-
-    override fun checkAuth(): Boolean {
-        return true
-    }
-
     override fun composeTweet(activity: DrawerActivity) {
 
         val session = TwitterCore.getInstance().sessionManager.activeSession
@@ -93,13 +72,18 @@ class TimelinePresenter(
         activity.startActivity(intent)
     }
 
-    override fun loadTweets(q: String) {
+    // home load new
+    override fun loadNew() {
+        loadTweets(maxId = null, sinceId = mMaxId)
+    }
+
+    override fun loadTweets(q: String, maxId: Long?, sinceId: Long?) {
 
         setActionbarSubtitle("Loading...")
 
         when (mTimelineTypeCode) {
             HOME_TIMELINE_CODE -> {
-                subscribeHome()
+                subscribeHome(maxId,sinceId)
             }
 
             SEARCH_TIMELINE_CODE -> {
@@ -114,7 +98,11 @@ class TimelinePresenter(
         val searchTimelineDisposable = dataSource.searchObservable(q).schedule().subscribe(
             { data ->
                 data?.tweets?.let {
+                    if (it.isEmpty()) return@subscribe
+
+                    setIdRange(it)
                     it.forEach { mTweets.add(0, it) }
+
                     view.updateRecyclerViewData()
                 }
             },
@@ -128,17 +116,23 @@ class TimelinePresenter(
         mCompositeDisposable.add(searchTimelineDisposable)
     }
 
+    private fun setIdRange(it: List<Tweet>) {
+        mMaxId = it[0].id
+        mMinId = it[it.lastIndex].id
+    }
+
     override fun updateRecyclerViewUI(recyclerView: RecyclerView) {
 
         mAdapter?.updateRecyclerUI(mTweets, recyclerView)
     }
 
-    private fun subscribeHome() {
-        val disposable = dataSource.homeObservable().schedule().subscribe(
+    private fun subscribeHome(maxId: Long?, sinceId: Long?) {
+        val disposable = dataSource.homeObservable(maxId, sinceId).schedule().subscribe(
             { data ->
                 data?.let {
                     it.forEach { mTweets.add(0, it) }
                     view.updateRecyclerViewData()
+                    view.snackbarShowUpdateSize("${it.size} new tweets")
                 }
             },
             { err ->
@@ -156,6 +150,20 @@ class TimelinePresenter(
 
     private fun setActionbarSubtitle(subtitle: String) {
         view.setActionbarSubtitle(subtitle)
+    }
+
+    fun setMaxId(maxId: Long) {
+        mMaxId = maxId
+    }
+
+    fun setMinId(minId: Long) {
+        mMinId = minId
+    }
+
+    fun linkToId(url: String): String {
+        val arr = url.split("/")
+        val size = arr.size
+        return arr[size - 1]
     }
 
     companion object {

@@ -12,7 +12,6 @@ interface DrawerContract {
         fun loadProfileImage(urlString: String, compressionQuality: Int)
         fun customUI(user: User)
         fun login()
-        fun setNetworkErrorMsgVisibility(visibilityCode: Int = android.view.View.GONE)
     }
 
     interface Presenter : BasePresenter {
