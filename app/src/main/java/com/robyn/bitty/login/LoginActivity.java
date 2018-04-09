@@ -17,7 +17,7 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
-import static com.robyn.bitty.utils.UtilsKt.makeSnackbar;
+import static com.robyn.bitty.utils.SnackUtilsKt.makeSnackbar;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();

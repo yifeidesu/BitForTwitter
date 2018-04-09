@@ -143,9 +143,9 @@ class TimelineAdapter(var mTweets: MutableList<Tweet>) :
 
         val onClickListenerItem = View.OnClickListener {
 
-            context.startActivity(
-                SoloActivity.newIntent(context, tweet.id)
-            )
+//            context.startActivity(
+//                SoloActivity.newIntent(context, tweet.id)
+//            )
 
             val intent = SoloActivity.newIntent(context, tweetId)
             (context as? AppCompatActivity)?.startActivityForResult(

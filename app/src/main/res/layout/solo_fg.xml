@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="com.robyn.bitty.utils.ViewUtilsKt"/>
+        <import type="com.robyn.bitty.utils.ModelUtilsKt"/>
 
         <variable
             name="tweet"
@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato_light"
-                        android:text="@{tweet.user.createdAt}"/>
+                        android:text="@{ModelUtilsKt.createAtTrimmed(tweet)}"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -74,7 +74,7 @@
             android:autoLink="web"
             android:paddingBottom="8dp"
             android:paddingTop="16dp"
-            android:text="@{ViewUtilsKt.removeLastHttps(tweet.text)}"/>
+            android:text="@{ModelUtilsKt.trimLinks(tweet)}"/>
 
         <ImageView
             android:id="@+id/media_image_solo"
