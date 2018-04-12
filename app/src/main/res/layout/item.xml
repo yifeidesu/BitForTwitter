@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="tweet"
+            type="com.twitter.sdk.android.core.models.Tweet"/>
+        <import type="com.robyn.bitty.utils.ModelUtilsKt" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/my_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:showDividers="middle">
+
+        <include
+            layout="@layout/item_tweet_layout"
+            bind:tweet="@{tweet}"/>
+
+        <include
+            layout="@layout/actions_fg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:tweet="@{tweet}"/>
+
+    </LinearLayout>
+</layout>

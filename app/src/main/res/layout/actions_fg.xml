@@ -1,103 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:gravity="center_vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/notesNum"
-        style="@style/notesText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-    android:id="@+id/notesText"
-    android:visibility="invisible"
-    android:layout_weight="1"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:gravity="start"
-    android:text="@string/notes_space"
-    style="@style/notesText"/>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="tweet"
+            type="com.twitter.sdk.android.core.models.Tweet"/>
+
+        <import type="com.robyn.bitty.utils.ModelUtilsKt"/>
+    </data>
 
     <LinearLayout
-        android:id="@+id/reply_layout"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/reply"
-            android:layout_gravity="center|end"
-            android:src="@drawable/ic_reply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
         <TextView
-            android:layout_gravity="center|start"
-            android:textSize="12sp"
-            android:layout_marginEnd="16dp"
+            android:id="@+id/notesNum"
+            style="@style/notesText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/retweet_layout"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/retweet"
-            android:layout_gravity="center|right"
-            android:src="@drawable/ic_retweet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
         <TextView
-            android:layout_gravity="center|start"
-            android:textSize="12sp"
-            android:layout_marginEnd="18dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:id="@+id/notesText"
+            style="@style/notesText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/notes_space"
+            android:visibility="invisible"/>
 
-    <LinearLayout
-        android:id="@+id/favo_layout"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/favo_image"
-            android:layout_gravity="center|right"
-            android:src="@drawable/ic_like"
+        <LinearLayout
+            android:id="@+id/reply_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/favoed"/>
-        <TextView
-            android:layout_gravity="center|start"
-            android:textSize="12sp"
-            android:layout_marginEnd="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:background="@color/white"
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/share_layout"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:actionProviderClass=
-            "android.widget.ShareActionProvider">
-        <ImageView
-            android:id="@+id/share"
-            android:layout_gravity="center|right"
-            android:src="@drawable/ic_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_gravity="center|start"
-            android:textSize="12sp"
-            android:layout_marginEnd="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:src="@drawable/ic_reply"/>
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/retweet_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/retweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:src="@drawable/ic_retweet"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:layout_marginEnd="18dp"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/favo_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:onClick="@{(view) -> ModelUtilsKt.favorite(view, tweet.id)}"
+                android:id="@+id/favo_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:contentDescription="@string/favoed"
+                android:src="@drawable/ic_like"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/share_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:actionProviderClass=
+                "android.widget.ShareActionProvider"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:src="@drawable/ic_share"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
+

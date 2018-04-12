@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.robyn.bitty.utils.ModelUtilsKt"/>
+
+        <import type="com.robyn.bitty.utils.TextUtilsKt"/>
+
+        <variable
+            name="tweet"
+            type="com.twitter.sdk.android.core.models.Tweet"/>
+
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/item_tweet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="@{(view) -> ModelUtilsKt.gotoSolo(view, tweet)}"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/retweet_by_item"
+            style="@style/tweet.screenNameRetweet"
+            retweetVisible="@{tweet}"
+            setRetweet="@{tweet}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:drawableStart="@drawable/ic_retweet"
+            android:gravity="center_vertical"
+            android:paddingEnd="0dp"
+            android:paddingStart="16dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/user_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/retweet_by_item"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/user_profile_image"
+                loadImageCircle="@{tweet}"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/user_s_profile_image"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    style="@style/tweet.userNameText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{TextUtilsKt.userName(tweet)}"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/user_screen_name"
+                        style="@style/tweet.screenNameText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{TextUtilsKt.atScreenName(tweet)}"/>
+
+                    <TextView
+                        android:id="@+id/create_at_item"
+                        style="@style/tweet.screenNameText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{TextUtilsKt.createAtFormatted(tweet)}"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/reply_to_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{TextUtilsKt.replyTo(tweet)}"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tweet_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_info_layout"
+            android:orientation="vertical"
+            android:paddingEnd="0dp"
+            android:paddingStart="58dp">
+
+            <TextView
+                android:id="@+id/tweet_text"
+                style="@style/tweet.entitiesText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:text="@{TextUtilsKt.trimLinks(tweet)}"/>
+
+            <ImageView
+                android:id="@+id/tweet_entity_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tweet_entity_images"/>
+
+            <ImageView
+                android:id="@+id/media_image_item"
+                loadImage="@{tweet}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/tweet_entity_images"
+                android:maxHeight="200dp"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:id="@+id/retweet_text_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{tweet.retweetedStatus.text}"/>
+
+            <TextView
+                android:id="@+id/quote_text_item"
+                setQuoteVisibility="@{tweet}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lightGray"
+                android:padding="8dp"
+                android:text="@{tweet.quotedStatus.text}"/>
+
+        </LinearLayout>
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/tweet_main_content"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"
+            >
+
+        </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+
+    </RelativeLayout>
+
+</layout>

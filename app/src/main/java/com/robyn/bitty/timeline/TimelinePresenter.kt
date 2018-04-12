@@ -9,6 +9,7 @@ import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 import io.reactivex.disposables.CompositeDisposable
+import kotlin.math.max
 
 class TimelinePresenter(
     val view: TimelineContract.View, private val dataSource: DataSource,
@@ -22,8 +23,8 @@ class TimelinePresenter(
     var mTweets = ArrayList<Tweet>()
     var mTweetsUpdate = ArrayList<Tweet>()
 
-    var mMaxId: Long = 0 // latest / most recent
-    var mMinId: Long = 0 // oldest
+    var mMostRecent: Long? = null // latest / most recent
+    var mOldest: Long? = null // oldest
 
     private var mQueryString: String = ""
 
@@ -74,16 +75,16 @@ class TimelinePresenter(
 
     // home load new
     override fun loadNew() {
-        loadTweets(maxId = null, sinceId = mMaxId)
+        loadTweets( sinceId = mMostRecent, maxId = null)
     }
 
-    override fun loadTweets(q: String, maxId: Long?, sinceId: Long?) {
+    override fun loadTweets(q: String, sinceId: Long?, maxId: Long?) {
 
         setActionbarSubtitle("Loading...")
 
         when (mTimelineTypeCode) {
             HOME_TIMELINE_CODE -> {
-                subscribeHome(maxId,sinceId)
+                subscribeHome(sinceId, maxId)
             }
 
             SEARCH_TIMELINE_CODE -> {
@@ -117,8 +118,8 @@ class TimelinePresenter(
     }
 
     private fun setIdRange(it: List<Tweet>) {
-        mMaxId = it[0].id
-        mMinId = it[it.lastIndex].id
+        mMostRecent = it[0].id
+        mOldest = it[it.lastIndex].id
     }
 
     override fun updateRecyclerViewUI(recyclerView: RecyclerView) {
@@ -126,13 +127,14 @@ class TimelinePresenter(
         mAdapter?.updateRecyclerUI(mTweets, recyclerView)
     }
 
-    private fun subscribeHome(maxId: Long?, sinceId: Long?) {
-        val disposable = dataSource.homeObservable(maxId, sinceId).schedule().subscribe(
+    private fun subscribeHome(sinceId: Long?, maxId: Long?) {
+        val disposable = dataSource.homeObservable(sinceId, maxId).schedule().subscribe(
             { data ->
                 data?.let {
                     it.forEach { mTweets.add(0, it) }
                     view.updateRecyclerViewData()
                     view.snackbarShowUpdateSize("${it.size} new tweets")
+                    setIdRange(it)
                 }
             },
             { err ->
@@ -153,11 +155,11 @@ class TimelinePresenter(
     }
 
     fun setMaxId(maxId: Long) {
-        mMaxId = maxId
+        mMostRecent = maxId
     }
 
     fun setMinId(minId: Long) {
-        mMinId = minId
+        mOldest = minId
     }
 
     fun linkToId(url: String): String {
