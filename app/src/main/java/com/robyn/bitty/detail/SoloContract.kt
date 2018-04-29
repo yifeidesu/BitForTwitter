@@ -11,6 +11,6 @@ interface SoloContract {
 
     interface Presenter {
         fun load()
-        fun getTweet():Tweet // todo temp
+        fun getTweet():Tweet
     }
 }

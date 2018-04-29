@@ -21,9 +21,8 @@ import retrofit2.Call
 import java.util.concurrent.Callable
 
 /**
- * functions for timelines
- *
- * Created by yifei on 9/14/2017.
+ * This class provides wrapper methods of the twitter service methods.
+ * Subscribe the return value to receive data.
  */
 
 class DataSource {
@@ -44,10 +43,12 @@ class DataSource {
         })
     }
 
-    fun homeObservable(maxId: Long? = null, sinceId: Long? = null): Observable<List<Tweet>?> {
-        return Observable.defer(Callable<ObservableSource<List<Tweet>?>> {
+    fun homeSingle(sinceId: Long? = null, maxId: Long? = null): Single<List<Tweet>?> {
+
+        return Single.defer(Callable<SingleSource<List<Tweet>?>> {
+
             try {
-                return@Callable Observable.just(
+                return@Callable Single.just(
                     homeCall(maxId, sinceId).execute().body()
                 )
             } catch (e: Exception) {
@@ -57,16 +58,14 @@ class DataSource {
         })
     }
 
-    private fun homeCall(
+     fun homeCall(
         sinceId: Long? = null,
-        maxId: Long? = null,
-        fetchNew: Boolean = true
+        maxId: Long? = null
     ): Call<MutableList<Tweet>> {
 
         val statusesService = client.statusesService
 
-        val call = if (fetchNew) {
-            statusesService.homeTimeline( // http get method
+        return statusesService.homeTimeline( // http get method
                 null,
                 sinceId, // to Fetch new, current maxId = this.minId
                 maxId,
@@ -75,21 +74,9 @@ class DataSource {
                 true,
                 true
             )
-        } else {
-            statusesService.homeTimeline(
-                null,
-                sinceId,
-                maxId,
-                null,
-                false,
-                true,
-                true
-            )
-        }
-        return call
     }
 
-    private fun searchCall(
+     fun searchCall(
         q: String = "cat",
         endId: Long? = null,
         fetchNew: Boolean = true,
@@ -114,10 +101,10 @@ class DataSource {
         return call
     }
 
-    fun searchObservable(q: String): Observable<Search?> {
-        return Observable.defer(Callable<ObservableSource<Search?>> {
+    fun searchSingle(q: String): Single<Search?> {
+        return Single.defer(Callable<SingleSource<Search?>> {
             try {
-                return@Callable Observable.just(
+                return@Callable Single.just(
                     searchCall(q).execute().body()
                 )
             } catch (e: Exception) {
@@ -133,8 +120,6 @@ class DataSource {
      *  if period <　24 hours
      *
      *  show 1, xxx min ago ; 2. xx hours ago
-     *
-     *  todo replace by model utils
      *
      */
     fun createdAtTime(timeString: String): String {
@@ -264,7 +249,6 @@ class DataSource {
     fun <T> Single<T>.schedule(): Single<T> {
         return subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-
     }
 
     companion object {

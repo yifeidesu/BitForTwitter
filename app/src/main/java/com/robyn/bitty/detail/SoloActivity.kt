@@ -28,7 +28,7 @@ class SoloActivity : AppCompatActivity() {
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_nav_back)
-        toolbar.setNavigationOnClickListener { finish() } // todo remove
+        toolbar.setNavigationOnClickListener { finish() }
 
         // Setup fragment and presenter
         val dataSource = DataSource.INSTANCE
@@ -46,6 +46,12 @@ class SoloActivity : AppCompatActivity() {
             soloFragment,
             R.id.fg_container_solo
         )
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        finish()
     }
 
     companion object {
