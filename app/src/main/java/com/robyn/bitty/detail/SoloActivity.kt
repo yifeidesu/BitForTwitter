@@ -13,8 +13,6 @@ import com.robyn.bitty.utils.replaceFragment
 /**
  * This Activity is to show a stand-alone tweet
  *
- *
- * todo add a fragment in this
  */
 class SoloActivity : AppCompatActivity() {
 
@@ -22,6 +20,7 @@ class SoloActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.solo_ac)
 
+        // Setup action bar
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
@@ -29,8 +28,9 @@ class SoloActivity : AppCompatActivity() {
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_nav_back)
-        toolbar.setNavigationOnClickListener { finish() } // todo remove
+        toolbar.setNavigationOnClickListener { finish() }
 
+        // Setup fragment and presenter
         val dataSource = DataSource.INSTANCE
 
         val tweetId = intent.getLongExtra(EXTRA_TWEET_ID, 510908133917487104L)
@@ -48,10 +48,16 @@ class SoloActivity : AppCompatActivity() {
         )
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        finish()
+    }
+
     companion object {
         private val TAG = SoloActivity::class.java.simpleName
 
-        val EXTRA_TWEET_ID = "tweet.id"
+        const val EXTRA_TWEET_ID = "tweet.id"
 
         fun newIntent(context: Context, tweetId: Long): Intent {
             return Intent(context, SoloActivity::class.java)

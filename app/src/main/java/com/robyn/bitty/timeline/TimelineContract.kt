@@ -14,7 +14,7 @@ interface TimelineContract {
 
         fun updateRecyclerViewData() // ?
 
-        fun setActionbarSubtitle(subtitle: String)
+        fun setActionbarTitle(subtitle: String)
 
         fun setAdapter(adapter: TimelineAdapter)
 
@@ -35,5 +35,6 @@ interface TimelineContract {
         var mTimelineTypeCode: Int
 
         fun loadNew()
+        fun loadMore()
     }
 }

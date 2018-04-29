@@ -34,9 +34,6 @@ class DrawerActivity : AppCompatActivity(), DrawerContract.View,
 
     lateinit var mProfileImageView: ImageView
 
-//    private var userImageUrl: URL? = null
-//    private var userImageUrlString: String? = null
-
     private val dataSource = DataSource()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,9 +179,7 @@ class DrawerActivity : AppCompatActivity(), DrawerContract.View,
                 tagFragment as TimelineFragment
             } else {
                 TimelineFragment.newInstance().also {
-                    Runnable {
-                        TimelinePresenter(it, dataSource, timelineCode)
-                    }.run()
+                    TimelinePresenter(it, dataSource, timelineCode)
                 }
             }
 
