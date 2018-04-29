@@ -9,7 +9,6 @@ import com.twitter.sdk.android.core.TwitterCore
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity
 import io.reactivex.disposables.CompositeDisposable
-import kotlin.math.max
 
 class TimelinePresenter(
     val view: TimelineContract.View, private val dataSource: DataSource,
@@ -21,16 +20,14 @@ class TimelinePresenter(
 
     var mAdapter: TimelineAdapter? = null
     var mTweets = ArrayList<Tweet>()
-    var mTweetsUpdate = ArrayList<Tweet>()
 
     var mMostRecent: Long? = null // latest / most recent
-    var mOldest: Long? = null // oldest
+    var mLeastRecent: Long? = null // oldest
 
     private var mQueryString: String = ""
 
     init {
         view.mPresenter = this
-        //mAdapter = TimelineAdapter(mTweets)
     }
 
     override fun setAdapterToRecyclerView(recyclerView: RecyclerView) {
@@ -38,8 +35,8 @@ class TimelinePresenter(
         recyclerView.adapter = mAdapter
     }
 
+    // Invoke in ac onStop()
     override fun disposeDisposables() {
-
         mCompositeDisposable.dispose()
     }
 
@@ -50,20 +47,27 @@ class TimelinePresenter(
         } else {
             mAdapter?.notifyDataSetChanged()
 
-            setActionbarSubtitle()
+            setActionbarTitle()
         }
     }
 
-    private fun setActionbarSubtitle() {
+    /**
+     * set actionbar title based on timeline type: home/search
+     */
+    private fun setActionbarTitle() {
         val subtitle = when (mTimelineTypeCode) {
-            0 -> "Home"
-            1 -> mQueryString
+            HOME_TIMELINE_CODE -> "Home"
+            SEARCH_TIMELINE_CODE -> mQueryString
             else -> ""
         }
 
-        view.setActionbarSubtitle(subtitle)
+        view.setActionbarTitle(subtitle)
     }
 
+    /**
+     * go to the compose activity to compose a tweet.
+     *
+     */
     override fun composeTweet(activity: DrawerActivity) {
 
         val session = TwitterCore.getInstance().sessionManager.activeSession
@@ -73,14 +77,23 @@ class TimelinePresenter(
         activity.startActivity(intent)
     }
 
-    // home load new
+    // refresh timeline for new items
     override fun loadNew() {
-        loadTweets( sinceId = mMostRecent, maxId = null)
+        loadTweets(sinceId = mMostRecent, maxId = null)
     }
 
-    override fun loadTweets(q: String, sinceId: Long?, maxId: Long?) {
+    override fun loadMore() {
+        loadTweets(maxId = mLeastRecent)
+    }
 
-        setActionbarSubtitle("Loading...")
+    /**
+     * @param q query string. optional
+     * @param maxId fetch tweets earlier than this time
+     * @param sinceId fetch tweets since this time
+     */
+    override fun loadTweets(q: String, maxId: Long?, sinceId: Long?) {
+
+        setActionbarTitle("Loading...")
 
         when (mTimelineTypeCode) {
             HOME_TIMELINE_CODE -> {
@@ -93,6 +106,9 @@ class TimelinePresenter(
         }
     }
 
+    /**
+     * @param q query string
+     */
     private fun subscribeSearch(q: String) {
         mQueryString = q
 
@@ -108,50 +124,78 @@ class TimelinePresenter(
                 }
             },
             { err ->
-                Log.e(TAG, err.message)
-                setActionbarSubtitle()
-                // todo view.show error msg
+                subscribeOnError(err)
             },
-            { setActionbarSubtitle() }
+            { setActionbarTitle() }
         )
         mCompositeDisposable.add(searchTimelineDisposable)
     }
 
-    private fun setIdRange(it: List<Tweet>) {
-        mMostRecent = it[0].id
-        mOldest = it[it.lastIndex].id
+    /**
+     * update tweets' time range
+     * @param list is the updated tweet list
+     */
+    private fun setIdRange(list: List<Tweet>) {
+        mMostRecent = list[0].id
+        mLeastRecent = list[list.lastIndex].id
     }
 
+    /**
+     * update recyclerview.adapter with updated tweet list.
+     * First update this presenter's mTweets field,
+     * then call this methods to update the recyclerView.adapter's data
+     *
+     * @param recyclerView this recyclerView will update ui with mTweets
+     *
+     */
     override fun updateRecyclerViewUI(recyclerView: RecyclerView) {
 
         mAdapter?.updateRecyclerUI(mTweets, recyclerView)
     }
 
+    /**
+     * subscribe to home Observable.
+     *
+     * @param sinceId   fetch tweets after this time
+     * @param maxId     fetch tweets earlier than this time
+     *
+     */
     private fun subscribeHome(sinceId: Long?, maxId: Long?) {
         val disposable = dataSource.homeObservable(sinceId, maxId).schedule().subscribe(
             { data ->
                 data?.let {
                     it.forEach { mTweets.add(0, it) }
                     view.updateRecyclerViewData()
-                    view.snackbarShowUpdateSize("${it.size} new tweets")
+
                     setIdRange(it)
                 }
             },
             { err ->
-                Log.e(TAG, err.message)
-                setActionbarSubtitle()
-                view.stopLoadingAnim()
+                subscribeOnError(err)
             },
             {
-                setActionbarSubtitle()
+                setActionbarTitle()
                 view.stopLoadingAnim()
             }
         )
         mCompositeDisposable.add(disposable)
     }
 
-    private fun setActionbarSubtitle(subtitle: String) {
-        view.setActionbarSubtitle(subtitle)
+    private fun subscribeOnError(err: Throwable) {
+        Log.e(TAG, err.message)
+        setActionbarTitle()
+        view.stopLoadingAnim()
+    }
+
+    /**
+     * Update action bar title by fg's callback.
+     * i.e. when start loading new tweets, set title to "Loading",
+     *      when loading finishes or network error, set title back to "Home" or query string.
+     *
+     * @param title is the actionbar title
+     */
+    private fun setActionbarTitle(title: String) {
+        view.setActionbarTitle(title)
     }
 
     fun setMaxId(maxId: Long) {
@@ -159,7 +203,7 @@ class TimelinePresenter(
     }
 
     fun setMinId(minId: Long) {
-        mOldest = minId
+        mLeastRecent = minId
     }
 
     fun linkToId(url: String): String {
@@ -171,6 +215,7 @@ class TimelinePresenter(
     companion object {
         const val TAG = "TimelinePresenter"
 
+        // Timeline code indicates what type of timeline is currently showing
         const val HOME_TIMELINE_CODE = 0
         const val SEARCH_TIMELINE_CODE = 1
     }

@@ -16,7 +16,8 @@ import com.robyn.bitty.utils.EndlessRecyclerOnScrollListener
 import com.robyn.bitty.utils.makeSnackbar
 
 /**
- * Home timeline
+ * Timeline fragment contains a RecyclerView,
+ * showing either home or search timeline based on timeline type code in [TimelinePresenter]
  *
  */
 
@@ -45,8 +46,6 @@ class TimelineFragment : Fragment(), TimelineContract.View {
         savedInstanceState: Bundle?
     ): View? {
 
-        //val view = inflater.inflate(R.layout.timeline_fg, container, false)
-
         val binding: TimelineFgBinding = DataBindingUtil
             .inflate(inflater, R.layout.timeline_fg, container, false)
 
@@ -62,8 +61,7 @@ class TimelineFragment : Fragment(), TimelineContract.View {
         mTimelineRecyclerView.addOnScrollListener(object :
             EndlessRecyclerOnScrollListener(layoutManager) {
             override fun onLoadMore(current_page: Int) {
-                // todo: fetch, max = last call's min / oldest
-                // mpresenter
+                mPresenter.loadMore()
             }
         })
 
@@ -89,14 +87,11 @@ class TimelineFragment : Fragment(), TimelineContract.View {
         }
 
         return binding.getRoot()
-        //return view
     }
 
-    override fun onDestroy() {
-
+    override fun onStop() {
+        super.onStop()
         mPresenter.disposeDisposables()
-
-        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -140,7 +135,6 @@ class TimelineFragment : Fragment(), TimelineContract.View {
     }
 
     override fun snackbarShowUpdateSize(msg: String) {
-        // todo temp snackbar shows new list size
         view?.let { makeSnackbar(it, msg) }
     }
 
@@ -148,14 +142,11 @@ class TimelineFragment : Fragment(), TimelineContract.View {
         mSwipeRefreshLayout.isRefreshing = false
     }
 
-    override fun setActionbarSubtitle(subtitle: String) {
+    override fun setActionbarTitle(subtitle: String) {
         mCallback.setActionbarSubtitle(subtitle)
     }
 
     private fun waitPresenter() {
-//        if (!(::mPresenter.isInitialized)) {
-//            Thread.sleep(500)
-//        }
 
         if (!(::mPresenter.isInitialized)) {
             Thread.sleep(100)

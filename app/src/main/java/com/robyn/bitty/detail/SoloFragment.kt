@@ -21,8 +21,6 @@ class SoloFragment : Fragment(), SoloContract.View {
         savedInstanceState: Bundle?
     ): View? {
 
-        //  val view = inflater.inflate(R.layout.solo_fg, container, false)
-
         mBinding =
                 DataBindingUtil.inflate(inflater, R.layout.solo_fg, container, false)
 
@@ -33,6 +31,11 @@ class SoloFragment : Fragment(), SoloContract.View {
         return view
     }
 
+    /**
+     * Set binding data
+     *
+     * @param tweet is loaded by the presenter's data source
+     */
     override fun load(tweet: Tweet) {
         mBinding.tweet = tweet
     }
